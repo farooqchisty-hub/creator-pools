@@ -372,7 +372,7 @@ function syncChips(){
        <span>Outside follower range</span><b>${oor.length}</b></div>`;
   if (stale.length) html += `<div class="hrow"><span class="dot" style="background:var(--warn)"></span>
        <span>Dropped, silent ${META.max_age_days}+ days</span><b>${stale.length}</b></div>
-     <p class="hnote">${stale.map(s => esc(s[0])+' ('+s[1]+'d)').join(' · ')}</p>`;
+     <p class="hnote">${stale.slice(0,15).map(s => esc(s[0])+(s[1]==null?'':' ('+s[1]+'d)')).join(' · ')}${stale.length>15?' · +'+(stale.length-15)+' more':''}</p>`;
   if (un.length) html += `<div class="hrow"><span class="dot" style="background:var(--text-faint)"></span>
        <span>No data — API could not return posts</span><b>${un.length}</b></div>
      <p class="hnote">${un.map(esc).join(' · ')}</p>`;
