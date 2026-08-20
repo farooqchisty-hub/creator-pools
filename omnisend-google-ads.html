@@ -154,8 +154,8 @@ footer p{margin:0 0 6px;max-width:80ch}
 <div class="wrap">
 <header class="mast">
   <p class="eyebrow">Competitive ad trace &nbsp;/&nbsp; captured 20 Aug 2026</p>
-  <h1>Every Google ad Omnisend is running, and the one you got served</h1>
-  <p class="sub">A full pull of UAB Omnisend's Google Ads Transparency Center record: 120 video creatives, 42 live search ads, 25 live display ads, with the YouTube URL behind each video ad.</p>
+  <h1>Every Google ad Omnisend is running</h1>
+  <p class="sub">A full pull of UAB Omnisend's Google Ads Transparency Center record: 120 video creatives, 42 live search ads and 25 live display ads, with the YouTube URL behind every video ad.</p>
   <div class="meta">
     <span>ADVERTISER <b>UAB Omnisend</b></span>
     <span>ID <b>AR02247994610099945473</b></span>
@@ -165,93 +165,7 @@ footer p{margin:0 0 6px;max-width:80ch}
 </header>
 
 <section>
-  <h2><span class="n">01</span>The ad you clicked, identified</h2>
-  <p class="lede">The landing page you shared carries <code>gad_campaignid=21355160358</code> and a <code>gbraid</code> parameter, so the click came off Google's video network. Exactly one creative in Omnisend's entire transparency record points at that URL.</p>
-  <div class="trace">
-    <figure class="thumb">
-      <img src="https://img.youtube.com/vi/HM2SJ3xi5Ug/maxresdefault.jpg" alt="Thumbnail of the Omnisend August 2026 product update video">
-      <figcaption>Send Time Optimization &amp; MCP Claude Connector | Omnisend August Updates &middot; 8:49 &middot; published 6 Aug 2026 &middot; 8,567 views against 180 views on a sibling organic video from the same channel.</figcaption>
-    </figure>
-    <div>
-      <h3>Creative CR02009282397962502145</h3>
-      <p style="margin:0 0 16px;color:var(--ink-2);font-size:15.5px">A monthly changelog walkthrough, not an acquisition ad. It is the thirteenth entry in an unbroken monthly series that has run since August 2025, each one landing on that month's help-center &ldquo;What's new&rdquo; article.</p>
-      <dl class="kv">
-        <dt>Status</dt><dd><span class="pill live dot">Live &middot; last served 20 Aug 2026</span> <span class="pill flag">Your ad</span></dd>
-        <dt>Video</dt><dd><a href="https://www.youtube.com/watch?v=HM2SJ3xi5Ug" target="_blank" rel="noopener">youtube.com/watch?v=HM2SJ3xi5Ug</a></dd>
-        <dt>Transparency</dt><dd><a href="https://adstransparency.google.com/advertiser/AR02247994610099945473/creative/CR02009282397962502145?region=anywhere" target="_blank" rel="noopener">adstransparency.google.com &rarr; creative</a></dd>
-        <dt>Landing</dt><dd>support.omnisend.com/en/articles/16095649-what-s-new-august-2026</dd>
-        <dt>Served in</dt><dd>India only. Impressions under 1,000, too low for Google to publish a band.</dd>
-        <dt>Series</dt><dd>Aug 2025 ran in 38 countries at 3,000 to 4,000 impressions. It has narrowed every quarter since. July and August 2026 are India only.</dd>
-      </dl>
-    </div>
-  </div>
-</section>
-
-<section>
-  <h2><span class="n">02</span>How to find these yourself</h2>
-  <p class="lede">Google's own Transparency Center is the ground truth and needs no login. The methods below are ordered by how much they actually return; the first four are what produced this page.</p>
-  <div class="methods">
-
-    <div class="method">
-      <div class="lhs"><h3>Ads Transparency Center, direct</h3><span class="rank"><b>Reliability high</b> &middot; free &middot; 2 minutes</span></div>
-      <div class="rhs">
-        <p>Search the domain, open the advertiser, filter to Video, and set the date preset. Creative text lives in a cross-origin iframe so you cannot copy it out, but the YouTube player is a real embed: right-click it and take &ldquo;Copy video URL&rdquo;.</p>
-        <pre><code>https://adstransparency.google.com/advertiser/AR02247994610099945473?region=anywhere
-&amp;preset-date=Last%2030%20days   # what is live right now</code></pre>
-      </div>
-    </div>
-
-    <div class="method">
-      <div class="lhs"><h3>ScrapeCreators Google Ads API</h3><span class="rank"><b>Reliability high</b> &middot; 1 credit per ad &middot; what built this page</span></div>
-      <div class="rhs">
-        <p>Three endpoints. Advertiser search resolves the legal entity, the company endpoint paginates creative IDs, the single-ad endpoint returns <code>variations</code> with <code>youtubeUrl</code>, <code>destinationUrl</code> and duration. That last field is the one no other method gives you.</p>
-        <pre><code>curl -H "x-api-key: $KEY" \
- "https://api.scrapecreators.com/v1/google/adLibrary/advertisers/search?query=Omnisend"
-
-curl -H "x-api-key: $KEY" \
- "https://api.scrapecreators.com/v1/google/company/ads?advertiser_id=AR02247994610099945473\
-&amp;format=video&amp;region=anywhere"          # 1 credit, paginate on cursor
-
-curl -H "x-api-key: $KEY" \
- "https://api.scrapecreators.com/v1/google/ad?url=&lt;creative_url&gt;&amp;cache_max_age=7d"</code></pre>
-      </div>
-    </div>
-
-    <div class="method">
-      <div class="lhs"><h3>Read the click URL</h3><span class="rank"><b>Reliability high</b> &middot; free &middot; instant</span></div>
-      <div class="rhs">
-        <p>Any ad click hands you the advertiser's own campaign taxonomy. On your URL: <code>gad_campaignid=21355160358</code> is the literal Google Ads campaign ID, <code>gbraid</code> marks a video-network click, <code>utm_campaign=video | cc | news</code> is their internal naming (channel, audience token, theme) and <code>utm_term=august2026</code> is the creative flight. Collect these across several ads you get served and their whole campaign structure falls out.</p>
-      </div>
-    </div>
-
-    <div class="method">
-      <div class="lhs"><h3>The YouTube channel view-count tell</h3><span class="rank"><b>Reliability high</b> &middot; free &middot; confirms spend</span></div>
-      <div class="rhs">
-        <p>Paid video assets sit publicly on the brand channel. Sort the channel by newest and look for videos whose view count is an order of magnitude above their neighbours. The August update has 8,567 views; a webinar posted the same week has 113. That gap is the ad budget, and it separates promoted assets from organic ones without any tooling.</p>
-      </div>
-    </div>
-
-    <div class="method">
-      <div class="lhs"><h3>Apify actors</h3><span class="rank"><b>Reliability medium</b> &middot; per-run cost &middot; good for bulk</span></div>
-      <div class="rhs">
-        <p><code>scrapesage/google-ads-transparency-scraper</code> accepts <code>advertiserIds</code>, <code>domains</code> and <code>queries</code>, and returns <code>shownForDays</code> and <code>regionsShown</code>. <code>solidcode/ads-transparency-scraper</code> is better for discovering advertiser IDs from a plain query, but its format labels are unreliable. Use either when you want to watch many competitors on a schedule rather than one deeply.</p>
-      </div>
-    </div>
-
-    <div class="method">
-      <div class="lhs"><h3>Read the GTM container</h3><span class="rank"><b>Reliability high</b> &middot; free &middot; reveals the stack</span></div>
-      <div class="rhs">
-        <p>This does not list ads, it tells you what the advertiser can target. Pull the container and count configured tag functions. Omnisend's <code>GTM-5D7T8D</code> holds nine live <code>awct</code> Google Ads conversion tags on conversion ID <code>823857736</code>, plus eight legacy conversion IDs and a <code>gclidw</code> conversion linker.</p>
-        <pre><code>curl -s "https://www.googletagmanager.com/gtm.js?id=GTM-5D7T8D" \
- | grep -oE '\{"function":"__(awct|googtag|gclidw)"' | sort | uniq -c</code></pre>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<section>
-  <h2><span class="n">03</span>What is live right now</h2>
+  <h2><span class="n">01</span>What is live right now</h2>
   <p class="lede">Counts below are creatives whose last-served date falls in the seven days to 20 August 2026. One creative can carry several video assets, which is why unique videos and creatives differ.</p>
   <div class="stats">
     <div class="stat"><span class="l">Live video creatives</span><span class="v">19</span><span class="h">16 unique YouTube assets</span></div>
@@ -276,12 +190,13 @@ curl -H "x-api-key: $KEY" \
     </div>
     <span class="count" id="count"></span>
   </div>
+  <p class="mono" style="font-size:11.5px;color:var(--ink-3);margin:0 0 12px;letter-spacing:.02em">Highlighted row = the monthly changelog creative discussed in section 02. Creative IDs link to Google's own record.</p>
   <div class="tw"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
 </section>
 
 <section>
-  <h2><span class="n">04</span>Was it retargeting?</h2>
-  <p class="lede">The Transparency Center never discloses targeting or audience lists, so no public source can prove this either way. What the data does settle is that your never-signed-up objection rules out the wrong thing.</p>
+  <h2><span class="n">02</span>Is this a retargeting account?</h2>
+  <p class="lede">The Transparency Center never discloses targeting or audience lists, so no public source can prove this either way. The clearest test case in the set is creative <code>CR02009282397962502145</code>, highlighted in the table above: an 8:49 changelog walkthrough landing on a help-center article, served in India only, under 1,000 impressions. Its shape says a great deal about how this account buys.</p>
   <div class="verdict">
     <div class="top">
       <h3>Most likely site-visitor remarketing, on a very small budget</h3>
@@ -291,9 +206,9 @@ curl -H "x-api-key: $KEY" \
       <div class="col for">
         <h4>Points to retargeting</h4>
         <ul class="ev">
-          <li><b>A signup was never required.</b> Google remarketing fires on a page view. Omnisend's container runs nine live Google Ads conversion tags and a conversion linker, so one visit to omnisend.com with ad-personalization consent puts you in their visitor audience. What your never-signing-up rules out is Customer Match, which needs your email address, not remarketing.</li>
+          <li><b>No signup is required to be on the list.</b> Google remarketing fires on a page view. Omnisend's container runs nine live Google Ads conversion tags on conversion ID <code>823857736</code> plus a conversion linker, so a single visit to omnisend.com with ad-personalization consent is enough to enter their visitor audience. Never having created an account rules out Customer Match, which needs an email address. It does not rule out remarketing.</li>
           <li><b>The creative is a retention asset.</b> An 8:49 changelog walkthrough landing on a help-center article is made for people who already know the product. Their actual prospecting videos run 0:22 to 0:35 and land on <code>/migrate-from-klaviyo/</code>, <code>/demo/</code> or the homepage.</li>
-          <li><b>They do not prospect in India.</b> Zero of 42 live search ads serve India. A brand that excludes a market from search would not open a broad YouTube prospecting campaign there, but an audience-based campaign follows the person wherever they are.</li>
+          <li><b>They do not prospect in India.</b> Zero of 42 live search ads serve India. A brand that excludes a market from search would not open a broad YouTube prospecting campaign there, but an audience-based campaign follows the person wherever they happen to be.</li>
           <li><b>The reach shrank as the audience narrowed.</b> The same monthly series ran in 38 markets at 3,000 to 4,000 impressions a year ago and is now one market under 1,000. That is the shape of a list, not of a geo buy.</li>
         </ul>
       </div>
@@ -302,7 +217,7 @@ curl -H "x-api-key: $KEY" \
         <ul class="ev">
           <li><b>A cheap Demand Gen buy looks identical from outside.</b> A low-budget YouTube in-feed campaign with broad or interest targeting produces the same signature: serving concentrated in one low-CPM market, impressions under the reporting threshold, no other markets recorded.</li>
           <li><b>India-only may be an artifact of low volume.</b> The Transparency Center lists markets where impressions were actually recorded. A campaign too small to register elsewhere shows up as one country even when the targeting is global.</li>
-          <li><b>Interest targeting would also catch you.</b> The video is keyworded for <code>klaviyo alternative</code>, <code>Claude MCP integration</code> and <code>Model Context Protocol</code>. Anyone with that watch history is in-market for it without ever having touched omnisend.com.</li>
+          <li><b>Interest targeting would catch the same people.</b> The video is keyworded for <code>klaviyo alternative</code>, <code>Claude MCP integration</code> and <code>Model Context Protocol</code>. Anyone with that watch history is in-market for it without ever having touched omnisend.com.</li>
         </ul>
       </div>
     </div>
@@ -311,7 +226,7 @@ curl -H "x-api-key: $KEY" \
       <ol>
         <li><b>On the ad itself:</b> the ⓘ or three-dot control on a YouTube ad opens &ldquo;Why this ad?&rdquo;. Google states the reason there, and &ldquo;you visited the advertiser's website or app&rdquo; is the disclosure that confirms remarketing outright.</li>
         <li><b>In My Ad Center:</b> open <a href="https://myadcenter.google.com/" target="_blank" rel="noopener">myadcenter.google.com</a> and check the advertiser list. Omnisend appearing there means they are reaching you through an audience, not a keyword.</li>
-        <li><b>In your own cookie jar:</b> a <code>_gcl_au</code> cookie on omnisend.com from your visit is the Google Ads linker, and it is what carried you into the list.</li>
+        <li><b>In the cookie jar:</b> a <code>_gcl_au</code> cookie set on omnisend.com is the Google Ads linker, and it is the mechanism that carries a visitor into the list.</li>
       </ol>
     </div>
   </div>
