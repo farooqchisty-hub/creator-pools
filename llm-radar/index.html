@@ -1,0 +1,262 @@
+<title>LLM Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --paper: #f7f8f6;
+    --surface: #fcfdfc;
+    --ink: #10130f;
+    --ink-2: #545750;
+    --muted: #8a8d85;
+    --hair: #e2e4dd;
+    --baseline: #c6c9c0;
+    --accent: #006300;
+    --track: #eef0ea;
+    --brevo: #008300;
+    --klaviyo: #2a78d6;
+    --omnisend: #e87ba4;
+    --warn-ink: #8a5b00;
+    --crit: #d03b3b;
+    --ring: rgba(16,19,15,0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0e0f0d;
+      --surface: #191b18;
+      --ink: #f4f5f1;
+      --ink-2: #c1c4ba;
+      --muted: #8a8d85;
+      --hair: #2b2e29;
+      --baseline: #3a3d37;
+      --accent: #35b435;
+      --track: #22251f;
+      --brevo: #1fa51f;
+      --klaviyo: #3987e5;
+      --omnisend: #d55181;
+      --warn-ink: #e0a933;
+      --crit: #e66767;
+      --ring: rgba(244,245,241,0.10);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0e0f0d;
+    --surface: #191b18;
+    --ink: #f4f5f1;
+    --ink-2: #c1c4ba;
+    --muted: #8a8d85;
+    --hair: #2b2e29;
+    --baseline: #3a3d37;
+    --accent: #35b435;
+    --track: #22251f;
+    --brevo: #1fa51f;
+    --klaviyo: #3987e5;
+    --omnisend: #d55181;
+    --warn-ink: #e0a933;
+    --crit: #e66767;
+    --ring: rgba(244,245,241,0.10);
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 28px clamp(16px, 4vw, 48px) 64px;
+    line-height: 1.45;
+  }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; border-bottom: 2px solid var(--ink); padding-bottom: 14px; }
+  h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+  h1 .dot { color: var(--accent); }
+  .prov { color: var(--ink-2); font-size: 12.5px; }
+  .prov b { color: var(--ink); font-weight: 600; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.09em; font-size: 11px; font-weight: 600; color: var(--muted); }
+  section { margin-top: 30px; }
+  .grid { display: grid; gap: 14px; }
+  .tiles { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+  .card { background: var(--surface); border: 1px solid var(--hair); border-radius: 8px; padding: 16px 18px; }
+  .tile .big { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; margin-top: 6px; }
+  .tile .sub { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; }
+  .cols { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 880px) { .cols { grid-template-columns: 1fr; } }
+  h2 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  .note { font-size: 12px; color: var(--muted); margin: 2px 0 12px; }
+
+  /* bars */
+  .barrow { display: grid; grid-template-columns: 96px 1fr 52px; align-items: center; gap: 10px; margin: 7px 0; font-size: 13px; }
+  .barrow .name { color: var(--ink-2); }
+  .track { background: var(--track); border-radius: 4px; height: 18px; position: relative; }
+  .fill { height: 100%; border-radius: 4px; min-width: 2px; }
+  .val { text-align: right; font-size: 12.5px; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--baseline); }
+  td { padding: 7px 10px; border-bottom: 1px solid var(--hair); vertical-align: top; }
+  tr:hover td { background: var(--track); }
+  .num { text-align: right; }
+  .cellbar { display: inline-block; height: 10px; border-radius: 3px; vertical-align: middle; margin-right: 7px; min-width: 2px; }
+  .scroll { overflow-x: auto; }
+
+  .chip { display: inline-block; border: 1px solid var(--hair); border-radius: 999px; padding: 1px 8px; font-size: 11.5px; color: var(--ink-2); margin: 1px 3px 1px 0; white-space: nowrap; }
+  .chip.miss { border-color: var(--crit); color: var(--crit); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); margin: 4px 0 10px; }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .footer-note { margin-top: 34px; border-top: 1px solid var(--baseline); padding-top: 14px; font-size: 12.5px; color: var(--ink-2); max-width: 72ch; }
+  .footer-note b { color: var(--ink); }
+  #tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--paper); font-size: 12px; padding: 5px 9px; border-radius: 5px; display: none; z-index: 9; max-width: 320px; }
+  .ref { font-size: 12.5px; color: var(--ink-2); }
+  .ref b { color: var(--ink); }
+</style>
+
+<header>
+  <h1>LLM Radar<span class="dot">.</span></h1>
+  <span class="prov" id="prov"></span>
+</header>
+
+<section>
+  <div class="grid tiles" id="tiles"></div>
+</section>
+
+<section class="grid cols">
+  <div class="card">
+    <h2>Brand visibility, unbranded prompts</h2>
+    <p class="note">Share of answers mentioning the brand at least once. Category prompts only, no brand names in any prompt.</p>
+    <div id="visbars"></div>
+  </div>
+  <div class="card">
+    <h2>By engine</h2>
+    <p class="note">Brevo mentioned vs brevo.com actually cited. The gap between the two bars is recoverable without new rankings.</p>
+    <div id="engbars"></div>
+    <div class="ref" id="llmlabref"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Topic matrix</h2>
+  <p class="note" id="topicnote"></p>
+  <div class="legend" id="legend"></div>
+  <div class="scroll"><table id="topictable"></table></div>
+</section>
+
+<section class="grid cols">
+  <div class="card">
+    <h2>Who carries the citations</h2>
+    <p class="note">Source class of every URL cited in unbranded answers.</p>
+    <div id="citebars"></div>
+  </div>
+  <div class="card">
+    <h2>Most cited hosts</h2>
+    <p class="note">These pages are the actual gatekeepers. Pitch or update these before writing anything new.</p>
+    <div class="scroll"><table id="hosttable"></table></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Action queue</h2>
+  <p class="note">Every prompt where Brevo was absent, ranked: fully invisible first, competitor presence and reachable cited pages raise the score.</p>
+  <div class="scroll"><table id="actiontable"></table></div>
+</section>
+
+<div class="footer-note" id="method"></div>
+<div id="tip" class="mono"></div>
+
+<script>
+const D = {"date": "2026-08-26", "at": "2026-08-26T12:24:39+00:00", "answers": 56, "answers_unbranded": 56, "engines": ["chatgpt", "perplexity"], "visibility_pct": {"brevo": 46.4, "klaviyo": 87.5, "omnisend": 89.3, "mailchimp": 30.4, "activecampaign": 21.4, "attentive": 19.6, "sendinblue": 1.8}, "share_pct": {"brevo": 20.8, "klaviyo": 39.2, "omnisend": 40.0}, "by_engine": {"chatgpt": {"answers": 28, "brevo_visibility": 42.9, "brevo_cited": 25.0, "klaviyo": 96.4, "omnisend": 92.9}, "perplexity": {"answers": 28, "brevo_visibility": 50.0, "brevo_cited": 32.1, "klaviyo": 78.6, "omnisend": 85.7}}, "by_topic": {"Email Marketing - Overall": {"answers": 4, "brevo": 75.0, "klaviyo": 100.0, "omnisend": 100.0}, "Email Marketing x BigCommerce": {"answers": 4, "brevo": 50.0, "klaviyo": 75.0, "omnisend": 100.0}, "Email Marketing x Magento": {"answers": 4, "brevo": 25.0, "klaviyo": 100.0, "omnisend": 50.0}, "Email Marketing x PrestaShop": {"answers": 4, "brevo": 100.0, "klaviyo": 100.0, "omnisend": 75.0}, "Email Marketing x Shopify": {"answers": 4, "brevo": 50.0, "klaviyo": 75.0, "omnisend": 100.0}, "Email Marketing x Squarespace": {"answers": 4, "brevo": 0.0, "klaviyo": 100.0, "omnisend": 100.0}, "Email Marketing x WooCommerce": {"answers": 4, "brevo": 75.0, "klaviyo": 100.0, "omnisend": 100.0}, "SMS Marketing x BigCommerce": {"answers": 4, "brevo": 0.0, "klaviyo": 75.0, "omnisend": 100.0}, "SMS Marketing x Magento": {"answers": 4, "brevo": 75.0, "klaviyo": 100.0, "omnisend": 100.0}, "SMS Marketing x Overall": {"answers": 4, "brevo": 25.0, "klaviyo": 50.0, "omnisend": 25.0}, "SMS Marketing x PrestaShop": {"answers": 4, "brevo": 75.0, "klaviyo": 100.0, "omnisend": 100.0}, "SMS Marketing x Shopify": {"answers": 4, "brevo": 25.0, "klaviyo": 75.0, "omnisend": 100.0}, "SMS Marketing x Squarespace": {"answers": 4, "brevo": 25.0, "klaviyo": 75.0, "omnisend": 100.0}, "SMS Marketing x WooCommerce": {"answers": 4, "brevo": 50.0, "klaviyo": 100.0, "omnisend": 100.0}}, "citation_classes": {"competitor": 93, "other": 839, "listicle": 234, "own": 33, "community": 60}, "top_cited_hosts": [["reddit.com", 46], ["sender.net", 42], ["getapp.com", 36], ["sequenzy.com", 35], ["emailtooltester.com", 35], ["omnisend.com", 34], ["emailvendorselection.com", 34], ["maestra.io", 30], ["brevo.com", 26], ["mobile-text-alerts.com", 26], ["apps.shopify.com", 23], ["bigcommerce.com", 23], ["klaviyo.com", 22], ["woocommerce.com", 18], ["encharge.io", 16]], "mention_no_citation": 11, "rows": [{"engine": "chatgpt", "topic": "Email Marketing - Overall", "branded": false, "prompt": "best tools for ecommerce email automation flows", "mentions": ["klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x BigCommerce", "branded": false, "prompt": "best email marketing software for a BigCommerce store needing advanced segmentation, revenue attribution and multichannel automation without enterprise pricing", "mentions": ["activecampaign", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x Magento", "branded": false, "prompt": "best email and loyalty platform for a mid-market Magento retailer selling both online and in-store with unified customer data", "mentions": ["klaviyo"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x PrestaShop", "branded": false, "prompt": "best email marketing software for a PrestaShop store needing advanced segmentation, revenue attribution and multichannel automation without enterprise pricing", "mentions": ["activecampaign", "brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x Shopify", "branded": false, "prompt": "best affordable email marketing services for a small Shopify store", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x Squarespace", "branded": false, "prompt": "best email software for Squarespace abandoned cart recovery", "mentions": ["klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x PrestaShop", "branded": false, "prompt": "best SMS marketing software for a mid-market PrestaShop retailer needing multichannel flows, segmentation and unified profiles", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "chatgpt", "topic": "SMS Marketing x Shopify", "branded": false, "prompt": "best platform for a Shopify store to run email, SMS and WhatsApp automation from one dashboard without per-contact pricing", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "chatgpt", "topic": "SMS Marketing x Squarespace", "branded": false, "prompt": "best SMS marketing platforms for a Squarespace store", "mentions": ["attentive", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x WooCommerce", "branded": false, "prompt": "most reliable SMS marketing services for WooCommerce merchants", "mentions": ["attentive", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing - Overall", "branded": false, "prompt": "best tools for ecommerce email automation flows", "mentions": ["activecampaign", "brevo", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing x BigCommerce", "branded": false, "prompt": "best email marketing software for a BigCommerce store needing advanced segmentation, revenue attribution and multichannel automation without enterprise pricing", "mentions": ["klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing x Magento", "branded": false, "prompt": "best email and loyalty platform for a mid-market Magento retailer selling both online and in-store with unified customer data", "mentions": ["klaviyo"], "brevo_mentioned": false, "brevo_cited": true}, {"engine": "perplexity", "topic": "Email Marketing x PrestaShop", "branded": false, "prompt": "best email marketing software for a PrestaShop store needing advanced segmentation, revenue attribution and multichannel automation without enterprise pricing", "mentions": ["activecampaign", "brevo", "klaviyo", "sendinblue"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "perplexity", "topic": "Email Marketing x Shopify", "branded": false, "prompt": "best affordable email marketing services for a small Shopify store", "mentions": ["brevo", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing x Squarespace", "branded": false, "prompt": "best email software for Squarespace abandoned cart recovery", "mentions": ["klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing x WooCommerce", "branded": false, "prompt": "best all-in-one email, SMS and automation platform for a bootstrapped WooCommerce store with native abandoned cart sync and a free tier", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x BigCommerce", "branded": false, "prompt": "best SMS tools for flash sale and promo alerts for a BigCommerce store", "mentions": ["klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x Magento", "branded": false, "prompt": "best platform for a Magento store to run email, SMS and WhatsApp automation from one dashboard without per-contact pricing", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "perplexity", "topic": "SMS Marketing x Overall", "branded": false, "prompt": "best SMS marketing tool for a growing online store that wants predictable pricing and prebuilt ecommerce automations", "mentions": ["klaviyo"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x PrestaShop", "branded": false, "prompt": "recommended SMS marketing platforms for PrestaShop online stores", "mentions": ["attentive", "brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x Shopify", "branded": false, "prompt": "recommended SMS marketing platforms for Shopify online stores", "mentions": ["attentive", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x Squarespace", "branded": false, "prompt": "best affordable SMS and email platform for a bootstrapped Squarespace store with abandoned cart SMS and native order-data sync", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "perplexity", "topic": "SMS Marketing x WooCommerce", "branded": false, "prompt": "best SMS tools for flash sale and promo alerts for a WooCommerce store", "mentions": ["brevo", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "perplexity", "topic": "Email Marketing - Overall", "branded": false, "prompt": "best email marketing tools with product recommendations for an ecommerce store", "mentions": ["activecampaign", "brevo", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing x BigCommerce", "branded": false, "prompt": "best email marketing platform for a small BigCommerce store sending under 10,000 emails a month that also includes SMS and WhatsApp in one dashboard", "mentions": ["brevo", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing x Magento", "branded": false, "prompt": "recommended email marketing solutions for Magento online stores", "mentions": ["brevo", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "perplexity", "topic": "Email Marketing x PrestaShop", "branded": false, "prompt": "best all-in-one email, SMS and automation platform for a bootstrapped PrestaShop store with native abandoned cart sync and a free tier", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "perplexity", "topic": "Email Marketing x Shopify", "branded": false, "prompt": "best email marketing tools that integrate with Shopify", "mentions": ["activecampaign", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing x Squarespace", "branded": false, "prompt": "best email marketing platforms for a Squarespace store", "mentions": ["klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "Email Marketing x WooCommerce", "branded": false, "prompt": "best email marketing tools with revenue tracking for a WooCommerce store", "mentions": ["activecampaign", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x BigCommerce", "branded": false, "prompt": "best tools for automated SMS flows on BigCommerce", "mentions": ["attentive", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x Magento", "branded": false, "prompt": "best SMS marketing platforms for a Magento store", "mentions": ["attentive", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x Overall", "branded": false, "prompt": "best SMS marketing tools with pay-as-you-go credits for an online store", "mentions": ["brevo"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "perplexity", "topic": "SMS Marketing x PrestaShop", "branded": false, "prompt": "best SMS marketing software for a mid-market PrestaShop retailer needing multichannel flows, segmentation and unified profiles", "mentions": ["klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x Shopify", "branded": false, "prompt": "best platform for a Shopify store to run email, SMS and WhatsApp automation from one dashboard without per-contact pricing", "mentions": ["omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x Squarespace", "branded": false, "prompt": "best SMS marketing platforms for a Squarespace store", "mentions": ["mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "perplexity", "topic": "SMS Marketing x WooCommerce", "branded": false, "prompt": "most reliable SMS marketing services for WooCommerce merchants", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "chatgpt", "topic": "Email Marketing x WooCommerce", "branded": false, "prompt": "best all-in-one email, SMS and automation platform for a bootstrapped WooCommerce store with native abandoned cart sync and a free tier", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "chatgpt", "topic": "SMS Marketing x BigCommerce", "branded": false, "prompt": "best SMS tools for flash sale and promo alerts for a BigCommerce store", "mentions": ["attentive", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x Magento", "branded": false, "prompt": "best platform for a Magento store to run email, SMS and WhatsApp automation from one dashboard without per-contact pricing", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "chatgpt", "topic": "SMS Marketing x Squarespace", "branded": false, "prompt": "best affordable SMS and email platform for a bootstrapped Squarespace store with abandoned cart SMS and native order-data sync", "mentions": ["klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x WooCommerce", "branded": false, "prompt": "best SMS tools for flash sale and promo alerts for a WooCommerce store", "mentions": ["klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing - Overall", "branded": false, "prompt": "best email marketing tools with product recommendations for an ecommerce store", "mentions": ["activecampaign", "brevo", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x BigCommerce", "branded": false, "prompt": "best tools for automated SMS flows on BigCommerce", "mentions": ["attentive", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x Magento", "branded": false, "prompt": "best SMS marketing platforms for a Magento store", "mentions": ["attentive", "brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "chatgpt", "topic": "SMS Marketing x Overall", "branded": false, "prompt": "best SMS marketing tools with pay-as-you-go credits for an online store", "mentions": [], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x Overall", "branded": false, "prompt": "best SMS marketing tool for a growing online store that wants predictable pricing and prebuilt ecommerce automations", "mentions": ["attentive", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x PrestaShop", "branded": false, "prompt": "recommended SMS marketing platforms for PrestaShop online stores", "mentions": ["brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}, {"engine": "chatgpt", "topic": "SMS Marketing x Shopify", "branded": false, "prompt": "recommended SMS marketing platforms for Shopify online stores", "mentions": ["attentive", "klaviyo", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x BigCommerce", "branded": false, "prompt": "best email marketing platform for a small BigCommerce store sending under 10,000 emails a month that also includes SMS and WhatsApp in one dashboard", "mentions": ["brevo", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "chatgpt", "topic": "Email Marketing x Magento", "branded": false, "prompt": "recommended email marketing solutions for Magento online stores", "mentions": ["activecampaign", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x PrestaShop", "branded": false, "prompt": "best all-in-one email, SMS and automation platform for a bootstrapped PrestaShop store with native abandoned cart sync and a free tier", "mentions": ["activecampaign", "brevo", "klaviyo", "omnisend"], "brevo_mentioned": true, "brevo_cited": true}, {"engine": "chatgpt", "topic": "Email Marketing x Shopify", "branded": false, "prompt": "best email marketing tools that integrate with Shopify", "mentions": ["activecampaign", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x Squarespace", "branded": false, "prompt": "best email marketing platforms for a Squarespace store", "mentions": ["klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": false, "brevo_cited": false}, {"engine": "chatgpt", "topic": "Email Marketing x WooCommerce", "branded": false, "prompt": "best email marketing tools with revenue tracking for a WooCommerce store", "mentions": ["activecampaign", "brevo", "klaviyo", "mailchimp", "omnisend"], "brevo_mentioned": true, "brevo_cited": false}], "actions": [{"pid": "470bb7f882", "prompt": "best SMS marketing platforms for a Squarespace store", "topic": "SMS Marketing x Squarespace", "engines_missed": ["chatgpt", "perplexity"], "competitors_present": ["attentive", "klaviyo", "mailchimp", "omnisend"], "target_hosts": ["capterra.com", "emailvendorselection.com", "getapp.com", "reddit.com", "sender.net"], "score": 37, "play": "pitch or update a cited listicle"}, {"pid": "a9aa75f9b1", "prompt": "best email marketing tools that integrate with Shopify", "topic": "Email Marketing x Shopify", "engines_missed": ["perplexity", "chatgpt"], "competitors_present": ["activecampaign", "klaviyo", "mailchimp", "omnisend"], "target_hosts": ["apps.shopify.com", "community.shopify.com", "emailtooltester.com", "emailvendorselection.com", "reddit.com"], "score": 37, "play": "pitch or update a cited listicle"}, {"pid": "5b42e1a0c1", "prompt": "best email marketing software for a BigCommerce store needing advanced segmentation, revenue attribution and multichannel automation without enterprise pricing", "topic": "Email Marketing x BigCommerce", "engines_missed": ["chatgpt", "perplexity"], "competitors_present": ["activecampaign", "klaviyo", "omnisend"], "target_hosts": ["emailtooltester.com", "getapp.com", "sender.net"], "score": 34, "play": "pitch or update a cited listicle"}, {"pid": "83041eecc0", "prompt": "best email software for Squarespace abandoned cart recovery", "topic": "Email Marketing x Squarespace", "engines_missed": ["chatgpt", "perplexity"], "competitors_present": ["klaviyo", "mailchimp", "omnisend"], "target_hosts": ["emailtooltester.com", "sender.net"], "score": 34, "play": "pitch or update a cited listicle"}, {"pid": "6d8617c1f0", "prompt": "best SMS marketing tool for a growing online store that wants predictable pricing and prebuilt ecommerce automations", "topic": "SMS Marketing x Overall", "engines_missed": ["perplexity", "chatgpt"], "competitors_present": ["attentive", "klaviyo", "omnisend"], "target_hosts": ["apps.shopify.com", "emailvendorselection.com", "learn.g2.com", "sender.net", "zapier.com"], "score": 34, "play": "pitch or update a cited listicle"}, {"pid": "1296cc4d09", "prompt": "recommended SMS marketing platforms for Shopify online stores", "topic": "SMS Marketing x Shopify", "engines_missed": ["perplexity", "chatgpt"], "competitors_present": ["attentive", "klaviyo", "omnisend"], "target_hosts": ["apps.shopify.com", "reddit.com", "shopify.com"], "score": 34, "play": "pitch or update a cited listicle"}, {"pid": "14407a7cb2", "prompt": "best email marketing platforms for a Squarespace store", "topic": "Email Marketing x Squarespace", "engines_missed": ["perplexity", "chatgpt"], "competitors_present": ["klaviyo", "mailchimp", "omnisend"], "target_hosts": ["emailtooltester.com", "getapp.com", "reddit.com"], "score": 34, "play": "pitch or update a cited listicle"}, {"pid": "9c4bb304e9", "prompt": "best tools for automated SMS flows on BigCommerce", "topic": "SMS Marketing x BigCommerce", "engines_missed": ["perplexity", "chatgpt"], "competitors_present": ["attentive", "klaviyo", "mailchimp", "omnisend"], "target_hosts": ["learn.g2.com"], "score": 34, "play": "pitch or update a cited listicle"}, {"pid": "e0244e501f", "prompt": "best SMS tools for flash sale and promo alerts for a BigCommerce store", "topic": "SMS Marketing x BigCommerce", "engines_missed": ["perplexity", "chatgpt"], "competitors_present": ["attentive", "klaviyo", "omnisend"], "target_hosts": ["getapp.com", "zapier.com"], "score": 33, "play": "pitch or update a cited listicle"}, {"pid": "6df422b34c", "prompt": "best email and loyalty platform for a mid-market Magento retailer selling both online and in-store with unified customer data", "topic": "Email Marketing x Magento", "engines_missed": ["chatgpt", "perplexity"], "competitors_present": ["klaviyo"], "target_hosts": ["getapp.com", "reddit.com", "sender.net"], "score": 28, "play": "pitch or update a cited listicle"}, {"pid": "77170c41e2", "prompt": "best tools for ecommerce email automation flows", "topic": "Email Marketing - Overall", "engines_missed": ["chatgpt"], "competitors_present": ["activecampaign", "klaviyo", "mailchimp", "omnisend"], "target_hosts": ["emailtooltester.com", "emailvendorselection.com", "moosend.com", "sender.net"], "score": 27, "play": "pitch or update a cited listicle"}, {"pid": "c27fd443f3", "prompt": "recommended email marketing solutions for Magento online stores", "topic": "Email Marketing x Magento", "engines_missed": ["chatgpt"], "competitors_present": ["activecampaign", "klaviyo", "mailchimp", "omnisend"], "target_hosts": ["emailvendorselection.com", "getapp.com", "reddit.com"], "score": 27, "play": "pitch or update a cited listicle"}, {"pid": "b4a1413e8d", "prompt": "best email marketing tools with revenue tracking for a WooCommerce store", "topic": "Email Marketing x WooCommerce", "engines_missed": ["perplexity"], "competitors_present": ["activecampaign", "klaviyo", "mailchimp", "omnisend"], "target_hosts": ["emailtooltester.com", "reddit.com", "woocommerce.com"], "score": 27, "play": "pitch or update a cited listicle"}, {"pid": "cf9838176d", "prompt": "most reliable SMS marketing services for WooCommerce merchants", "topic": "SMS Marketing x WooCommerce", "engines_missed": ["chatgpt"], "competitors_present": ["attentive", "klaviyo", "omnisend"], "target_hosts": ["getapp.com", "reddit.com", "sender.net", "woocommerce.com", "zapier.com"], "score": 24, "play": "pitch or update a cited listicle"}, {"pid": "343f89a729", "prompt": "best affordable SMS and email platform for a bootstrapped Squarespace store with abandoned cart SMS and native order-data sync", "topic": "SMS Marketing x Squarespace", "engines_missed": ["chatgpt"], "competitors_present": ["klaviyo", "mailchimp", "omnisend"], "target_hosts": ["emailtooltester.com", "emailvendorselection.com", "getapp.com", "sender.net"], "score": 24, "play": "pitch or update a cited listicle"}, {"pid": "c0d46a1a93", "prompt": "best SMS marketing platforms for a Magento store", "topic": "SMS Marketing x Magento", "engines_missed": ["perplexity"], "competitors_present": ["attentive", "klaviyo", "omnisend"], "target_hosts": ["emailvendorselection.com", "learn.g2.com", "sender.net", "zapier.com"], "score": 24, "play": "pitch or update a cited listicle"}, {"pid": "0002df57d4", "prompt": "best SMS marketing software for a mid-market PrestaShop retailer needing multichannel flows, segmentation and unified profiles", "topic": "SMS Marketing x PrestaShop", "engines_missed": ["perplexity"], "competitors_present": ["klaviyo", "omnisend"], "target_hosts": ["apps.shopify.com", "emailvendorselection.com", "learn.g2.com", "reddit.com", "sender.net"], "score": 21, "play": "pitch or update a cited listicle"}, {"pid": "357e8b5b9a", "prompt": "best platform for a Shopify store to run email, SMS and WhatsApp automation from one dashboard without per-contact pricing", "topic": "SMS Marketing x Shopify", "engines_missed": ["perplexity"], "competitors_present": ["klaviyo", "omnisend"], "target_hosts": ["apps.shopify.com", "emailtooltester.com", "reddit.com", "sender.net", "shopify.com"], "score": 21, "play": "pitch or update a cited listicle"}, {"pid": "f10614bca4", "prompt": "best SMS tools for flash sale and promo alerts for a WooCommerce store", "topic": "SMS Marketing x WooCommerce", "engines_missed": ["chatgpt"], "competitors_present": ["klaviyo", "mailchimp", "omnisend"], "target_hosts": ["woocommerce.com"], "score": 20, "play": "pitch or update a cited listicle"}, {"pid": "b35bc15f98", "prompt": "best SMS marketing tools with pay-as-you-go credits for an online store", "topic": "SMS Marketing x Overall", "engines_missed": ["chatgpt"], "competitors_present": [], "target_hosts": ["emailvendorselection.com", "g2.com", "sender.net", "zapier.com"], "score": 15, "play": "pitch or update a cited listicle"}], "history": [{"date": "2026-08-26", "answers_unbranded": 56, "visibility_pct": {"brevo": 46.4, "klaviyo": 87.5, "omnisend": 89.3}, "share_pct": {"brevo": 20.8, "klaviyo": 39.2, "omnisend": 40.0}}], "llmlab_ref": {"date": "2026-08-20", "visibility": 38.64, "answers": 7936}};
+const BRAND_COLOR = { brevo: "var(--brevo)", klaviyo: "var(--klaviyo)", omnisend: "var(--omnisend)" };
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const el = (h) => { const t = document.createElement("template"); t.innerHTML = h.trim(); return t.content.firstChild; };
+
+/* provenance */
+document.getElementById("prov").innerHTML =
+  `run <b class="mono">${D.date}</b> · <b class="mono">${D.answers_unbranded}</b> unbranded answers · engines <b>${D.engines.join(", ")}</b> · prompts from the Brevo ecom tracking sheet, sampled 2 per topic`;
+
+/* tiles */
+const tiles = [
+  ["Brevo visibility", D.visibility_pct.brevo + "%", "unbranded answers mentioning Brevo"],
+  ["3-brand share of voice", D.share_pct.brevo + "%", `Klaviyo ${D.share_pct.klaviyo}% · Omnisend ${D.share_pct.omnisend}%`],
+  ["Mentioned, not cited", D.mention_no_citation, "answers naming Brevo with no brevo.com link"],
+  ["Action queue", D.actions.length + " gaps", "prompts where Brevo is absent on some engine"],
+];
+document.getElementById("tiles").append(...tiles.map(([k, v, s]) =>
+  el(`<div class="card tile"><div class="eyebrow">${k}</div><div class="big mono">${v}</div><div class="sub">${s}</div></div>`)));
+
+/* visibility bars */
+function bar(name, pct, color, tipTxt) {
+  const r = el(`<div class="barrow"><span class="name">${name}</span><div class="track"><div class="fill" style="width:${Math.min(pct,100)}%;background:${color}"></div></div><span class="val mono">${pct}%</span></div>`);
+  r.querySelector(".track").addEventListener("mousemove", e => tip(e, tipTxt || `${name}: ${pct}%`));
+  r.querySelector(".track").addEventListener("mouseleave", hideTip);
+  return r;
+}
+const visOrder = ["brevo", "klaviyo", "omnisend", "mailchimp", "activecampaign", "attentive", "sendinblue"];
+const visBox = document.getElementById("visbars");
+visOrder.forEach(b => {
+  const pct = D.visibility_pct[b] ?? 0;
+  visBox.append(bar(cap(b), pct, BRAND_COLOR[b] || "var(--baseline)",
+    `${cap(b)} appears in ${pct}% of ${D.answers_unbranded} unbranded answers`));
+});
+
+/* engine bars */
+const engBox = document.getElementById("engbars");
+Object.entries(D.by_engine).forEach(([eng, e]) => {
+  engBox.append(el(`<div class="eyebrow" style="margin:10px 0 2px">${eng} · ${e.answers} answers</div>`));
+  engBox.append(bar("mentioned", e.brevo_visibility, "var(--brevo)", `${eng}: Brevo mentioned in ${e.brevo_visibility}%`));
+  engBox.append(bar("cited", e.brevo_cited, "var(--accent)", `${eng}: brevo.com cited in ${e.brevo_cited}%`));
+});
+if (D.llmlab_ref) {
+  document.getElementById("llmlabref").innerHTML =
+    `<br>Reference: LLMLab's last good read (${D.llmlab_ref.date}) put Brevo visibility at <b class="mono">${D.llmlab_ref.visibility}%</b> over ${D.llmlab_ref.answers} answers. Different prompt pool and sample size, shown for corroboration, never blended into the numbers above.`;
+}
+
+/* topic matrix */
+const trio = ["brevo", "klaviyo", "omnisend"];
+document.getElementById("legend").append(...trio.map(b =>
+  el(`<span><span class="sw" style="background:${BRAND_COLOR[b]}"></span>${cap(b)}</span>`)));
+const topics = Object.entries(D.by_topic);
+const lowN = topics.length && topics[0][1].answers <= 6;
+document.getElementById("topicnote").textContent =
+  `Visibility per topic. ${lowN ? "Pilot sample: " + topics[0][1].answers + " answers per topic, read direction not decimals. A full sweep firms these up." : ""}`;
+const tt = document.getElementById("topictable");
+tt.append(el(`<tr><th>Topic</th>${trio.map(b => `<th>${cap(b)}</th>`).join("")}<th class="num">n</th></tr>`));
+topics.sort((a, b) => a[1].brevo - b[1].brevo || b[1].klaviyo - a[1].klaviyo);
+topics.forEach(([t, v]) => {
+  tt.append(el(`<tr><td>${t}</td>${trio.map(b =>
+    `<td><span class="cellbar" style="width:${(v[b] ?? 0) * 0.55}px;background:${BRAND_COLOR[b]}"></span><span class="mono">${v[b] ?? 0}%</span></td>`).join("")}<td class="num mono">${v.answers}</td></tr>`));
+});
+
+/* citation classes */
+const clsBox = document.getElementById("citebars");
+const clsTotal = Object.values(D.citation_classes).reduce((a, b) => a + b, 0) || 1;
+const clsOrder = ["own", "competitor", "listicle", "community", "other"];
+const clsLabel = { own: "brevo.com", competitor: "competitor sites", listicle: "listicles and reviews", community: "community", other: "other" };
+clsOrder.forEach(c => {
+  const n = D.citation_classes[c] || 0;
+  const pct = Math.round(1000 * n / clsTotal) / 10;
+  clsBox.append(bar(clsLabel[c], pct, c === "own" ? "var(--brevo)" : c === "competitor" ? "var(--crit)" : "var(--baseline)",
+    `${clsLabel[c]}: ${n} of ${clsTotal} citations`));
+});
+
+/* hosts */
+const ht = document.getElementById("hosttable");
+ht.append(el(`<tr><th>Host</th><th class="num">Citations</th></tr>`));
+D.top_cited_hosts.slice(0, 12).forEach(([h, n]) =>
+  ht.append(el(`<tr><td class="mono">${h}</td><td class="num mono">${n}</td></tr>`)));
+
+/* actions */
+const at = document.getElementById("actiontable");
+at.append(el(`<tr><th style="min-width:280px">Prompt</th><th>Topic</th><th>Missed on</th><th>Competitors present</th><th>Play</th></tr>`));
+D.actions.slice(0, 12).forEach(a => at.append(el(`<tr>
+  <td>${a.prompt}</td><td>${a.topic}</td>
+  <td>${a.engines_missed.map(e => `<span class="chip miss">${e}</span>`).join("")}</td>
+  <td>${a.competitors_present.map(c => `<span class="chip">${cap(c)}</span>`).join("") || "<span class='chip'>none</span>"}</td>
+  <td>${a.play}${a.target_hosts.length ? "<br><span class='mono' style='font-size:11px;color:var(--muted)'>" + a.target_hosts.join(", ") + "</span>" : ""}</td>
+</tr>`)));
+
+/* method */
+document.getElementById("method").innerHTML =
+  `<b>Method.</b> Prompts come only from the Brevo ecommerce tracking sheet (346 category prompts, 14 topics); the engine can never invent its own. Branded and unbranded prompts are scored separately by design, and every prompt in this run is unbranded, so no self-flattering share of voice is possible. A mention is a word-boundary brand match in the answer text; a citation is a linked source URL, classified by host. Sendinblue is matched separately from Brevo and held out of the share set. Raw answers are kept per run under data/raw/, so every number on this page traces to a stored answer.`;
+
+/* tooltip */
+const tipEl = document.getElementById("tip");
+function tip(e, txt) { tipEl.textContent = txt; tipEl.style.display = "block"; tipEl.style.left = Math.min(e.clientX + 12, innerWidth - 330) + "px"; tipEl.style.top = (e.clientY + 14) + "px"; }
+function hideTip() { tipEl.style.display = "none"; }
+</script>
