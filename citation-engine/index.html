@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Citation Gap Ledger</title>
+<meta name="description" content="Pilot read on Brevo's ecommerce AI-search citation gaps: where outreach helps, and the cheaper fix it would have missed.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="Citation Gap Ledger">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%94%8E</text></svg>">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root {
+  --ground:#f6f8f4; --panel:#ffffff; --panel-2:#f0f3ed; --line:#dbe2d6; --line-2:#e8ede4;
+  --ink:#141a15; --ink-2:#4a5650; --ink-3:#78857d;
+  --brevo:#008300; --klaviyo:#2a78d6; --omni:#c4457e;
+  --good:#1f7a34; --warn:#9a6b06; --bad:#b0430c;
+  --good-bg:#e6f2e7; --warn-bg:#f7efdc; --bad-bg:#f8e8de;
+  --shadow:0 1px 2px rgba(20,30,22,.05), 0 8px 24px -16px rgba(20,30,22,.28);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:#0d120f; --panel:#141b17; --panel-2:#1a221d; --line:#26312a; --line-2:#1f2823;
+    --ink:#e8efe9; --ink-2:#9fada5; --ink-3:#6d7d74;
+    --brevo:#3fa93f; --klaviyo:#5d9ce6; --omni:#e07fae;
+    --good:#5cbb6f; --warn:#d5a63c; --bad:#e07a4a;
+    --good-bg:#142b19; --warn-bg:#2e2612; --bad-bg:#2e1c12;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:#0d120f; --panel:#141b17; --panel-2:#1a221d; --line:#26312a; --line-2:#1f2823;
+  --ink:#e8efe9; --ink-2:#9fada5; --ink-3:#6d7d74;
+  --brevo:#3fa93f; --klaviyo:#5d9ce6; --omni:#e07fae;
+  --good:#5cbb6f; --warn:#d5a63c; --bad:#e07a4a;
+  --good-bg:#142b19; --warn-bg:#2e2612; --bad-bg:#2e1c12;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -18px rgba(0,0,0,.8);
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+.wrap { max-width:1120px; margin:0 auto; padding:44px 24px 80px; }
+h1,h2,h3 { font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif; text-wrap:balance; margin:0; }
+h1 { font-size:clamp(30px,4.2vw,46px); font-weight:800; letter-spacing:-.024em; line-height:1.04; }
+h2 { font-size:21px; font-weight:700; letter-spacing:-.012em; }
+h3 { font-size:15px; font-weight:700; letter-spacing:-.005em; }
+.mono { font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+.eyebrow { font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--ink-3); font-weight:500; }
+
+header { border-bottom:2px solid var(--ink); padding-bottom:22px; margin-bottom:34px; }
+.sub { color:var(--ink-2); font-size:16.5px; max-width:66ch; margin-top:12px; }
+.meta { display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:16px; }
+.meta span { font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); }
+.meta b { color:var(--ink-2); font-weight:500; }
+
+section { margin-top:44px; }
+.shead { display:flex; align-items:baseline; gap:14px; margin-bottom:6px; flex-wrap:wrap; }
+.snote { color:var(--ink-2); font-size:14.5px; max-width:72ch; margin:8px 0 20px; }
+
+/* pipeline: a real sequence, so it is numbered */
+.pipe { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+.step { background:var(--panel); border:1px solid var(--line); border-radius:3px;
+  padding:14px 15px 15px; position:relative; box-shadow:var(--shadow); }
+.step .n { font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-3);
+  letter-spacing:.1em; }
+.step .v { font-family:"Bricolage Grotesque",sans-serif; font-size:32px; font-weight:700;
+  line-height:1.05; margin-top:7px; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+.step .l { font-size:12.5px; color:var(--ink-2); margin-top:3px; }
+.step.term { border-color:var(--brevo); }
+.step.term .v { color:var(--brevo); }
+
+.finding { background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--brevo);
+  border-radius:3px; padding:24px 26px; box-shadow:var(--shadow); }
+.finding p { margin:12px 0 0; color:var(--ink-2); max-width:70ch; }
+.finding p strong { color:var(--ink); font-weight:600; }
+
+table { width:100%; border-collapse:collapse; font-size:13.5px; }
+.scroll { overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--panel);
+  box-shadow:var(--shadow); }
+th { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3); font-weight:500; text-align:left;
+  padding:11px 14px; border-bottom:1px solid var(--line); white-space:nowrap; background:var(--panel-2); }
+td { padding:10px 14px; border-bottom:1px solid var(--line-2); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tbody tr:hover { background:var(--panel-2); }
+.host { font-weight:500; white-space:nowrap; }
+.host a { color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
+.host a:hover { border-bottom-color:var(--brevo); color:var(--brevo); }
+.host a:focus-visible { outline:2px solid var(--brevo); outline-offset:2px; }
+.num { font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.dim { color:var(--ink-3); }
+.email { font-size:12px; color:var(--ink-2); white-space:nowrap; }
+
+.tier { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.05em;
+  padding:2.5px 7px; border-radius:2px; text-transform:uppercase; white-space:nowrap; }
+.t-named { background:var(--good-bg); color:var(--good); }
+.t-personal { background:var(--good-bg); color:var(--good); }
+.t-role { background:var(--panel-2); color:var(--ink-3); border:1px solid var(--line); }
+
+.rivals { display:flex; flex-wrap:wrap; gap:4px; }
+.riv { font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-2);
+  background:var(--panel-2); border:1px solid var(--line-2); padding:1.5px 6px; border-radius:2px; }
+
+.barcell { display:flex; align-items:center; gap:9px; min-width:150px; }
+.bar { display:block; width:86px; height:6px; background:var(--line-2); border-radius:1px; overflow:hidden; }
+.bar i { display:block; height:100%; }
+.b-good i { background:var(--good); } .b-warn i { background:var(--warn); } .b-bad i { background:var(--bad); }
+.pscore { font-size:12px; color:var(--ink-2); }
+.marks { display:flex; gap:4px; }
+.mk { font-family:"IBM Plex Mono",monospace; font-size:10px; padding:1.5px 5px; border-radius:2px;
+  border:1px solid var(--line-2); }
+.mk.on { background:var(--good-bg); color:var(--good); border-color:transparent; }
+.mk.off { color:var(--ink-3); text-decoration:line-through; opacity:.6; }
+
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:14px; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:3px; padding:19px 20px;
+  box-shadow:var(--shadow); display:flex; flex-direction:column; gap:9px; }
+.card .cn { font-family:"Bricolage Grotesque",sans-serif; font-size:29px; font-weight:700;
+  letter-spacing:-.03em; line-height:1; }
+.card p { margin:0; font-size:13.5px; color:var(--ink-2); }
+.card .rank { font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3); }
+.c1 { border-top:3px solid var(--brevo); } .c1 .cn { color:var(--brevo); }
+.c2 { border-top:3px solid var(--klaviyo); } .c2 .cn { color:var(--klaviyo); }
+.c3 { border-top:3px solid var(--omni); } .c3 .cn { color:var(--omni); }
+
+.gate { background:var(--bad-bg); border:1px solid var(--bad); border-radius:3px; padding:20px 22px; }
+.gate h3 { color:var(--bad); }
+.gate ul { margin:11px 0 0; padding-left:19px; color:var(--ink-2); font-size:14px; }
+.gate li { margin-bottom:5px; }
+.gate li:last-child { margin-bottom:0; }
+
+footer { margin-top:52px; padding-top:20px; border-top:1px solid var(--line);
+  color:var(--ink-3); font-size:12px; font-family:"IBM Plex Mono",monospace; }
+@media (max-width:640px) { .wrap { padding:30px 16px 60px; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Brevo Ecommerce &middot; citation-engine &middot; pilot read</div>
+  <h1>We are already on the page.<br>The engine still names Klaviyo.</h1>
+  <p class="sub">A backlink tool would sell us 63 outreach targets. The measured data says the
+  binding constraint is somewhere else entirely, and it is cheaper to fix.</p>
+  <div class="meta">
+    <span>source <b>llm-radar sweep 2026-08-26</b></span>
+    <span>28 prompts &times; 2 engines &rarr; <b>56 answers</b></span>
+    <span>Brevo visibility <b>46.4%</b> vs Klaviyo <b>87.5%</b>, Omnisend <b>89.3%</b></span>
+    <span>generated <b>2026-09-01</b></span>
+  </div>
+</header>
+
+<section>
+  <div class="shead"><h2>What the funnel actually yields</h2></div>
+  <p class="snote">Every stage is a filter with a reason. The drop from 161 to 63 is pages
+  where our brand turned out not to be missing at all.</p>
+  <div class="pipe">
+    <div class="step"><div class="n">01 CITED</div><div class="v">235</div><div class="l">hosts feeding ecom answers</div></div>
+    <div class="step"><div class="n">02 PITCHABLE LANE</div><div class="v">161</div><div class="l">editorial, after removing 49 vendors and 3 of our own</div></div>
+    <div class="step"><div class="n">03 GAP VERIFIED</div><div class="v">63</div><div class="l">rivals on the page, we are genuinely absent</div></div>
+    <div class="step"><div class="n">04 CONTACTABLE</div><div class="v">28</div><div class="l">a working address on the site's own domain</div></div>
+    <div class="step term"><div class="n">05 WORTH SENDING</div><div class="v">7</div><div class="l">reaches a named human, not a helpdesk</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>The finding</h2></div>
+  <div class="finding">
+    <h3>Our entries are generic. The questions are not.</h3>
+    <p>On <strong>15 of 26</strong> pages where Brevo appears but the engine ignored us,
+    our placement is already good, sometimes <strong>rank #1, in the intro, in a heading</strong>.
+    Position is not the problem.</p>
+    <p>What differs is content. The prompts name a platform: <em>BigCommerce</em>, <em>Magento</em>,
+    <em>Squarespace</em>. On <strong>emailtooltester.com</strong> we are the number one listed tool and our
+    entry <strong>names no ecommerce platform at all</strong>. On <strong>insiderone.com</strong>, a Magento
+    query, our entry names none while Klaviyo's names Shopify. Three of five pages tested show the
+    same shape.</p>
+    <p>So when someone asks an engine for the best email tool for a BigCommerce store, nothing in our
+    entry connects us to the question, however high up the page we sit. That is a content fix on pages
+    we already own a position on, not a link acquisition problem.</p>
+    <p class="mono" style="font-size:12px;color:var(--ink-3)">Caveat: n=5, pilot sweep. The 346-prompt run is what confirms it.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Three lanes, ranked by what I would fund</h2></div>
+  <div class="cards">
+    <div class="card c1">
+      <div class="rank">First &middot; cheapest</div>
+      <div class="cn">15</div>
+      <h3>Entry depth</h3>
+      <p>Pages we already rank at or near the top of. Add one line per platform to our entry.
+      No cold email, no new relationship, no link needed.</p>
+    </div>
+    <div class="card c2">
+      <div class="rank">Second &middot; the Elvix play</div>
+      <div class="cn">7</div>
+      <h3>Outreach</h3>
+      <p>63 verified gaps, 28 contactable, but only
+      7 reach a named human. The tail is thin affiliate sites where a
+      placement is worth little.</p>
+    </div>
+    <div class="card c3">
+      <div class="rank">Third &middot; opportunistic</div>
+      <div class="cn">8</div>
+      <h3>Buried entries</h3>
+      <p>Genuinely badly placed, some past 90% of the page. Low influence sites, so worth doing
+      only when the editor is already replying to us.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Lane 1 &middot; entry depth</h2><span class="eyebrow">where we already appear</span></div>
+  <p class="snote">Sorted by citation influence. A high placement score with a low result is the
+  anomaly worth acting on: we are well positioned and still not surfacing.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>host</th><th>influence</th><th>placement</th><th>our rank</th><th>first mention</th><th>appears in</th><th>ahead of us</th></tr></thead>
+    <tbody><tr>
+<td class="host">emailtooltester.com</td>
+<td class="num">39.0</td>
+<td class="barcell"><span class="bar b-good"><i style="width:75%"></i></span><span class="mono pscore">75</span></td>
+<td class="num">#1<span class="dim">/5</span></td>
+<td class="num">0.6%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"></td>
+</tr><tr>
+<td class="host">emailvendorselection.com</td>
+<td class="num">37.0</td>
+<td class="barcell"><span class="bar b-good"><i style="width:72%"></i></span><span class="mono pscore">72</span></td>
+<td class="num">#2<span class="dim">/7</span></td>
+<td class="num">0.4%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">activecampaign</span></td>
+</tr><tr>
+<td class="host">albato.com</td>
+<td class="num">27.5</td>
+<td class="barcell"><span class="bar b-good"><i style="width:88%"></i></span><span class="mono pscore">88</span></td>
+<td class="num">#4<span class="dim">/6</span></td>
+<td class="num">3.2%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">activecampaign</span></td>
+</tr><tr>
+<td class="host">insiderone.com</td>
+<td class="num">18.0</td>
+<td class="barcell"><span class="bar b-good"><i style="width:85%"></i></span><span class="mono pscore">85</span></td>
+<td class="num">#4<span class="dim">/5</span></td>
+<td class="num">6.5%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">activecampaign</span></td>
+</tr><tr>
+<td class="host">ventureharbour.com</td>
+<td class="num">13.0</td>
+<td class="barcell"><span class="bar b-bad"><i style="width:2%"></i></span><span class="mono pscore">0</span></td>
+<td class="num">#5<span class="dim">/5</span></td>
+<td class="num">93.7%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk off" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">activecampaign</span><span class="riv">klaviyo</span><span class="riv">omnisend</span></td>
+</tr><tr>
+<td class="host">marketingemailtools.com</td>
+<td class="num">11.5</td>
+<td class="barcell"><span class="bar b-good"><i style="width:87%"></i></span><span class="mono pscore">87</span></td>
+<td class="num">#5<span class="dim">/7</span></td>
+<td class="num">1.7%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">sequenzy</span><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host">wifitalents.com</td>
+<td class="num">7.5</td>
+<td class="barcell"><span class="bar b-good"><i style="width:87%"></i></span><span class="mono pscore">87</span></td>
+<td class="num">#3<span class="dim">/4</span></td>
+<td class="num">8.4%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">mailchimp</span><span class="riv">klaviyo</span></td>
+</tr><tr>
+<td class="host">softwareinspect.com</td>
+<td class="num">6.0</td>
+<td class="barcell"><span class="bar b-bad"><i style="width:4%"></i></span><span class="mono pscore">4</span></td>
+<td class="num">#5<span class="dim">/6</span></td>
+<td class="num">57.2%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk off" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">mailchimp</span><span class="riv">activecampaign</span></td>
+</tr><tr>
+<td class="host">outfy.com</td>
+<td class="num">6.0</td>
+<td class="barcell"><span class="bar b-warn"><i style="width:55%"></i></span><span class="mono pscore">55</span></td>
+<td class="num">#4<span class="dim">/5</span></td>
+<td class="num">25.8%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">omnisend</span><span class="riv">klaviyo</span><span class="riv">activecampaign</span></td>
+</tr><tr>
+<td class="host">ecommerce-gold.com</td>
+<td class="num">6.0</td>
+<td class="barcell"><span class="bar b-good"><i style="width:60%"></i></span><span class="mono pscore">60</span></td>
+<td class="num">#4<span class="dim">/5</span></td>
+<td class="num">7.2%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">omnisend</span><span class="riv">klaviyo</span><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host">smspartner.eu</td>
+<td class="num">6.0</td>
+<td class="barcell"><span class="bar b-good"><i style="width:75%"></i></span><span class="mono pscore">75</span></td>
+<td class="num">#1<span class="dim">/3</span></td>
+<td class="num">7.3%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"></td>
+</tr><tr>
+<td class="host">peertopeermarketing.co</td>
+<td class="num">6.0</td>
+<td class="barcell"><span class="bar b-good"><i style="width:100%"></i></span><span class="mono pscore">100</span></td>
+<td class="num">#1<span class="dim">/5</span></td>
+<td class="num">12.4%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"></td>
+</tr><tr>
+<td class="host">mailtoolfinder.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-bad"><i style="width:2%"></i></span><span class="mono pscore">0</span></td>
+<td class="num">#5<span class="dim">/5</span></td>
+<td class="num">95.1%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk off" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">activecampaign</span></td>
+</tr><tr>
+<td class="host">optinmonster.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-bad"><i style="width:10%"></i></span><span class="mono pscore">10</span></td>
+<td class="num">#2<span class="dim">/3</span></td>
+<td class="num">23.9%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk off" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host">attribuly.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-bad"><i style="width:25%"></i></span><span class="mono pscore">25</span></td>
+<td class="num">#5<span class="dim">/5</span></td>
+<td class="num">65.9%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk off" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">attentive</span></td>
+</tr><tr>
+<td class="host">textus.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-bad"><i style="width:25%"></i></span><span class="mono pscore">25</span></td>
+<td class="num">#4<span class="dim">/4</span></td>
+<td class="num">57.5%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">attentive</span><span class="riv">omnisend</span></td>
+</tr><tr>
+<td class="host">nvecta.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-bad"><i style="width:32%"></i></span><span class="mono pscore">32</span></td>
+<td class="num">#3<span class="dim">/4</span></td>
+<td class="num">31.2%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">sender</span></td>
+</tr><tr>
+<td class="host">libautech.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-warn"><i style="width:50%"></i></span><span class="mono pscore">50</span></td>
+<td class="num">#4<span class="dim">/4</span></td>
+<td class="num">26.8%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">attentive</span><span class="riv">klaviyo</span><span class="riv">omnisend</span></td>
+</tr><tr>
+<td class="host">bestdigitaltoolsmentor.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-good"><i style="width:62%"></i></span><span class="mono pscore">62</span></td>
+<td class="num">#3<span class="dim">/4</span></td>
+<td class="num">11.1%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">activecampaign</span><span class="riv">omnisend</span></td>
+</tr><tr>
+<td class="host">gitnux.org</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-good"><i style="width:62%"></i></span><span class="mono pscore">62</span></td>
+<td class="num">#3<span class="dim">/4</span></td>
+<td class="num">8.3%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">omnisend</span><span class="riv">klaviyo</span></td>
+</tr><tr>
+<td class="host">mailtoolscout.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-good"><i style="width:84%"></i></span><span class="mono pscore">84</span></td>
+<td class="num">#5<span class="dim">/6</span></td>
+<td class="num">1.3%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host">getnextcrm.com</td>
+<td class="num">5.5</td>
+<td class="barcell"><span class="bar b-good"><i style="width:88%"></i></span><span class="mono pscore">88</span></td>
+<td class="num">#4<span class="dim">/6</span></td>
+<td class="num">12.7%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">omnisend</span><span class="riv">klaviyo</span><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host">storeownertips.com</td>
+<td class="num">5.0</td>
+<td class="barcell"><span class="bar b-good"><i style="width:85%"></i></span><span class="mono pscore">85</span></td>
+<td class="num">#4<span class="dim">/5</span></td>
+<td class="num">8.4%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">omnisend</span><span class="riv">klaviyo</span><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host">stackscored.com</td>
+<td class="num">4.5</td>
+<td class="barcell"><span class="bar b-bad"><i style="width:2%"></i></span><span class="mono pscore">0</span></td>
+<td class="num">#3<span class="dim">/3</span></td>
+<td class="num">56.1%</td>
+<td class="marks"><span class="mk off" title="intro">intro</span><span class="mk off" title="heading">heading</span><span class="mk off" title="table">table</span></td>
+<td class="rivals"><span class="riv">attentive</span><span class="riv">klaviyo</span></td>
+</tr><tr>
+<td class="host">dupple.com</td>
+<td class="num">4.5</td>
+<td class="barcell"><span class="bar b-good"><i style="width:90%"></i></span><span class="mono pscore">90</span></td>
+<td class="num">#4<span class="dim">/7</span></td>
+<td class="num">1.3%</td>
+<td class="marks"><span class="mk on" title="intro">intro</span><span class="mk on" title="heading">heading</span><span class="mk on" title="table">table</span></td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">attentive</span></td>
+</tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="shead"><h2>Lane 2 &middot; outreach shortlist</h2><span class="eyebrow">verified gaps with a real contact</span></div>
+  <p class="snote">Every row was checked by opening the page: the rivals shown are really listed on it
+  and Brevo really is not. Addresses on a foreign domain were discarded, which removed 8 scraped
+  placeholders including one that read as a person.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>host</th><th>score</th><th>contact</th><th>address</th><th>rivals on that page</th></tr></thead>
+    <tbody><tr>
+<td class="host"><a href="https://ecommerceparadise.com/best-abandoned-cart-email-software/" target="_blank" rel="noopener">ecommerceparadise.com</a></td>
+<td class="num">22.0</td>
+<td><span class="tier t-named">named</span></td>
+<td class="mono email">trevor@ecommerceparadise.com</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">mailchimp</span><span class="riv">activecampaign</span></td>
+</tr><tr>
+<td class="host"><a href="https://www.ecdigitalstrategy.com/blog/best-sms-marketing-platforms-ecommerce-2026/" target="_blank" rel="noopener">ecdigitalstrategy.com</a></td>
+<td class="num">17.0</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">support@ecdigitalstrategy.com</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host"><a href="https://appstoreresearch.com/blog/klaviyo-vs-attentive-vs-postscript" target="_blank" rel="noopener">appstoreresearch.com</a></td>
+<td class="num">13.5</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">hello@appstoreresearch.com</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">mailchimp</span><span class="riv">attentive</span></td>
+</tr><tr>
+<td class="host"><a href="https://ecommercetech.io/blog/best-sms-marketing-tools-for-ecommerce" target="_blank" rel="noopener">ecommercetech.io</a></td>
+<td class="num">12.0</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">office@ecommercetech.io</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">attentive</span></td>
+</tr><tr>
+<td class="host"><a href="https://www.charleagency.com/articles/sms-marketing-app-shopify/" target="_blank" rel="noopener">charleagency.com</a></td>
+<td class="num">11.0</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">hello@charleagency.com</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">attentive</span></td>
+</tr><tr>
+<td class="host"><a href="https://ustechautomations.com/resources/blog/why-ecommerce-teams-klaviyo-vs-attentive-for-dtc-subscription-2026" target="_blank" rel="noopener">ustechautomations.com</a></td>
+<td class="num">9.5</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">operations@ustechautomations.com</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">attentive</span></td>
+</tr><tr>
+<td class="host"><a href="https://saascrmreview.com/best-sms-marketing/" target="_blank" rel="noopener">saascrmreview.com</a></td>
+<td class="num">9.0</td>
+<td><span class="tier t-personal">personal</span></td>
+<td class="mono email">founder@saascrmreview.com</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">omnisend</span><span class="riv">mailchimp</span><span class="riv">attentive</span></td>
+</tr><tr>
+<td class="host"><a href="https://stickydigital.io/blogs/sticky-digital-services/best-email-marketing-platforms-for-mid-market-ecommerce-and-how-to-choose-the-right-one-for-where-you-re-actually-going" target="_blank" rel="noopener">stickydigital.io</a></td>
+<td class="num">7.5</td>
+<td><span class="tier t-named">named</span></td>
+<td class="mono email">nikki@stickydigital.io</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">attentive</span><span class="riv">sender</span></td>
+</tr><tr>
+<td class="host"><a href="https://www.cminds.com/blog/magento/magento-email-marketing-services-comparison/" target="_blank" rel="noopener">cminds.com</a></td>
+<td class="num">6.0</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">info@cminds.com</td>
+<td class="rivals"><span class="riv">omnisend</span><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host"><a href="https://www.thebrandmethod.com/blog/best-email-marketing-squarespace" target="_blank" rel="noopener">thebrandmethod.com</a></td>
+<td class="num">6.0</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">hello@thebrandmethod.com</td>
+<td class="rivals"><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host"><a href="https://www.top10.com/website-builders/10-best-email-marketing-integrations-for-squarespace" target="_blank" rel="noopener">top10.com</a></td>
+<td class="num">6.0</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">contact@top10.com</td>
+<td class="rivals"><span class="riv">klaviyo</span><span class="riv">mailchimp</span><span class="riv">activecampaign</span></td>
+</tr><tr>
+<td class="host"><a href="https://aloware.com/blog/our-top-6-favorite-sms-automation-tools-the-ultimate-list" target="_blank" rel="noopener">aloware.com</a></td>
+<td class="num">5.5</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">sales@aloware.com</td>
+<td class="rivals"><span class="riv">klaviyo</span></td>
+</tr><tr>
+<td class="host"><a href="https://www.bigcatcreative.com/blog/squarespace-email-campaigns-compare" target="_blank" rel="noopener">bigcatcreative.com</a></td>
+<td class="num">5.5</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">support@bigcatcreative.com</td>
+<td class="rivals"><span class="riv">mailchimp</span></td>
+</tr><tr>
+<td class="host"><a href="https://www.bot.space/blog/best-whatsapp-marketing-platforms-shopify" target="_blank" rel="noopener">bot.space</a></td>
+<td class="num">5.5</td>
+<td><span class="tier t-role">role</span></td>
+<td class="mono email">support@bot.space</td>
+<td class="rivals"><span class="riv">klaviyo</span></td>
+</tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="shead"><h2>Nothing has been sent</h2></div>
+  <div class="gate">
+    <h3>The send gate is closed, by design</h3>
+    <ul>
+      <li>No dispatch code exists in the engine yet. There is no path from this list to an inbox.</li>
+      <li>Two PushOwl inboxes are shortlisted (<span class="mono">ashley.d@emailbypushowl.com</span>,
+          <span class="mono">ashley@experiencepushowl.com</span>), both at warmup 100 on separate domains.
+          Both are <strong>paused in Instantly</strong> and neither has been enabled.</li>
+      <li>Sender domain says PushOwl, the pitch is about Brevo. The copy has to bridge that in the
+          first line or an editor bins it.</li>
+      <li><span class="mono">queue</span> refuses to run unless the sender is provisioned, a human wrote
+          the draft, the brief is marked approved, and a batch approval record exists on disk.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  citation-engine &middot; workspaces/brevo-ecom &middot; prospects_2026-09-01.json,
+  placement_2026-09-01.json &middot; every row traces to a citation URL in the Aug 26 sweep
+</footer>
+</div>
+</body>
+</html>
