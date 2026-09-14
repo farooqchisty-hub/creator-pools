@@ -81,9 +81,10 @@ hr{border:0;border-top:1px solid var(--line);margin:2.6em 0}
 <tr><td>Concession count</td><td>One, always conditional</td><td>A free improvement teaches them the number keeps moving</td></tr>
 <tr><td>Priced messages from us</td><td>Three maximum</td><td>Counter, conditional move, close</td></tr>
 <tr><td><code>PROGRAM_CEILING</code></td><td><b>$250</b></td><td>At the LinkedIn CPM of $25 this is ~10,000 impressions. Above it, paid ads beat the programme</td></tr>
+<tr><td><code>MIN_OFFER_USD</code></td><td><b>$100</b></td><td>Nobody is offered less. Farooq, 15 Sep: "this is too less for anyone to care". A quote under the floor is accepted AT the floor</td></tr>
 <tr><td><code>ACCEPT_OUTRIGHT</code></td><td><b>$150</b></td><td>Haggling under this costs more in goodwill than it saves in cash</td></tr>
-<tr><td><code>reach_cap</code></td><td><code>median_reactions &times; 50 &times; $0.025</code></td><td>Stops a confident negotiator with a dead feed getting paid like a live one</td></tr>
-<tr><td>Payable</td><td><code>min(0.75Q, 250, reach_cap)</code></td><td>Three independent brakes, any one of which binds</td></tr>
+<tr><td>Engagement bands</td><td>&ge;10 reactions &rarr; $150<br>&ge;25 &rarr; $200<br>&ge;50 &rarr; $250</td><td>Replaces the <code>reach_cap</code> formula, which did not survive the $100 floor. See below</td></tr>
+<tr><td>Payable</td><td><code>min(0.75Q, 250, band)</code>, floored at $100</td><td>Three independent brakes, any one of which binds. Every settled fee lands in $100 to $250</td></tr>
 <tr><td>Disclosure</td><td>Mandatory, payout refused without it</td><td>FTC, ASA and LinkedIn terms. Also makes the Klaviyo conflict visible up front</td></tr>
 <tr><td>Payout</td><td>One payment, after the post is live and verified, via Tolt</td><td>Standing rule. No advance, no staged split</td></tr>
 <tr><td>Per-person cap</td><td>2 posts per quarter</td><td>Without it one enthusiast invoices fifteen times</td></tr>
@@ -91,6 +92,11 @@ hr{border:0;border-top:1px solid var(--line);margin:2.6em 0}
 
 <div class="box w">
 <p><span class="k">The guardrail that matters most.</span> The ladder is a percentage of <em>their</em> number, which means without an absolute cap the counterparty sets our budget. A $2,000 quote yields $1,500 at "halfway", fifteen times the original intent, and the existing <code>HARD_CEILING_USD</code> of $1,000 would not stop it. <code>PROGRAM_CEILING</code> and <code>reach_cap</code> are not nice-to-haves, they are the reason this model is safe to automate.</p>
+</div>
+
+<div class="box w">
+<p><span class="k">The reach_cap formula did not survive the $100 floor, and it is worth saying why rather than quietly swapping it.</span> The first draft priced the per-person ceiling as <code>median_reactions &times; 50 impressions &times; $25 CPM / 1000</code>. That needs <b>80 median reactions to clear $100</b> and 200 to clear $250. A good ecommerce agency owner runs 10 to 40. The formula would have rejected essentially the entire programme.</p>
+<p>The honest reading is that $100 to $250 for a seeded post is a <b>$50 to $125 CPM, not $25</b>, and that is defensible on its own terms: a post from a trusted operator to a peer audience is not an ad impression and should not be priced like one. So engagement stops being a price formula and becomes a ceiling band, which is what it was actually good for. It still does the job it was introduced for, which is stopping a confident negotiator with a dead feed from being paid like a live one.</p>
 </div>
 
 <h2 id="base">2. Base: fork outreach-engine, not the creator engine</h2>
@@ -623,26 +629,48 @@ export function evaluateSeedingCounter({ quote, theirCounter, medianReactions,
 <li>Whether the 164 PushOwl partners already earning commissions get cash or programme benefits. Paying someone who already earns from us sets a precedent that cannot be walked back.</li>
 </ul>
 
-<h2 id="phases">20. Build phases</h2>
+<h2 id="phases">20. Build log</h2>
+
+<p>Phases 0 to 5 were executed on 15 September. What follows is what actually happened, including the three defects the build surfaced, because each of them would have bitten the next fork too.</p>
 
 <table>
-<tr><th>Phase</th><th>Work</th><th>Verified by</th></tr>
-<tr><td>0</td><td>Fork <code>outreach-engine</code>, provision D1, Pages, Worker. Run <code>apply-config</code> and <code>preflight</code></td><td><code>preflight.mjs</code> passes on a fully rebranded fork</td></tr>
-<tr><td>1</td><td>Forward-port the eleven items in section 3, including <code>migrate_v19</code></td><td>Existing rule tests pass; the queue index appears in the query plan as <code>SEARCH q USING COVERING INDEX</code></td></tr>
-<tr><td>2</td><td>Delete: pricing, gmail, market, cream, runner, Instagram and X routes and pages. Delete the proof-of-work gate</td><td>Line count down, tests still green, no dead route</td></tr>
-<tr><td>3</td><td>Schema: new columns, <code>deliverables</code>, retargeted ceiling triggers</td><td><code>schema.js</code> matches live; trigger rejects a 251</td></tr>
-<tr><td>4</td><td><code>seeding.js</code> and the sixteen guards in section 16</td><td>All sixteen tests written first, then made to pass</td></tr>
-<tr><td>5</td><td><code>staleness.js</code> plus the treg enrichment path. Run read-only over bucket 3</td><td>The real Tier A count for 760 PushOwl partners, under $10</td></tr>
-<tr><td>6</td><td>Import all three buckets, dedupe, suppression, the 13 overlap agencies flagged hand-run</td><td>Row counts reconcile against the source sheets</td></tr>
-<tr><td>7</td><td>Sequences, drafting prompts, tone register. Nothing sends</td><td>Twenty drafts reviewed by hand across all three buckets</td></tr>
-<tr><td>8</td><td>Dashboard: trim, retarget, add Posts</td><td>The board is usable for a day of real review</td></tr>
-<tr><td>9</td><td>Domains warmed, new Instantly workspace, campaign verified <code>status=1</code> with one real send to a controlled address</td><td>An actual email arrives, rendered, from the new domain</td></tr>
-<tr><td>10</td><td>Bucket 3 only, 25 a day, two weeks. Then widen</td><td>Reply rate, quote distribution and the first settled fee</td></tr>
+<tr><th>Phase</th><th>State</th><th>Evidence</th></tr>
+<tr><td>0 Fork and provision</td><td>done</td><td><code>farooqchisty-hub/brevo-partner-voices</code>, D1 <code>partner-voices</code>, Pages and Worker live, <code>preflight</code> passes</td></tr>
+<tr><td>1 Forward-port</td><td>done</td><td>6 modules, migrations v16 to v20, the inbound pagination fix, the sender fallback, 3 cold-cap call sites</td></tr>
+<tr><td>2 Delete</td><td>done</td><td>Proof-of-work gate replaced, no-price-no-send gate removed, per-channel ternaries collapsed</td></tr>
+<tr><td>3 Schema</td><td>done</td><td><code>migrate_v21</code> seeding, <code>v22</code> drift, <code>v23</code> missing tables. Both money triggers verified aborting on the live database</td></tr>
+<tr><td>4 Policy and guards</td><td>done</td><td><code>src/seeding.js</code>, <b>141 tests passing</b>, enforced by <code>deploy.sh</code></td></tr>
+<tr><td>5 Qualification pass</td><td>done</td><td><code>src/staleness.js</code> plus <code>tools/qualify_bucket3.py</code>, run read-only over the partner export</td></tr>
 </table>
 
-<div class="box">
-<p><span class="k">Sending stays off until phase 10, and every message needs human approval throughout.</span> The agent operating this system may not approve, may not enable sending, and may not commit to a fee.</p>
+<h3>Three defects the build surfaced</h3>
+
+<div class="box e">
+<p><span class="k">1. The Pages half bound the live creator database.</span> <code>apply-config</code> rewrote the root <code>wrangler.toml</code>, <code>provision.sh</code> created a fresh D1, <code>deploy.sh</code> reported success and <code>preflight</code> passed, while <code>pages/wrangler.toml</code> still carried the previous owner's database id. Pages serves the entire API, so the new dashboard was reading the original engine's real creators, real threads and <code>sending_enabled: true</code>. A POST to <code>/api/queue</code> on the new URL would have written into it.</p>
+<p>Nothing looked wrong: <code>/api/overview</code> returned 200 with entirely plausible numbers, because they were somebody else's real numbers. Only GETs were issued. Fixed at source in <code>apply-config.mjs</code>, guarded by <code>test/isolation.test.mjs</code>, and the three deployments carrying the wrong binding were deleted.</p>
 </div>
+
+<div class="box w">
+<p><span class="k">2. Fifty-one columns and four tables exist only on the upstream live database and in no migration file.</span> Applied by hand and never written down, so a fresh fork built from the committed migrations is missing them and the ported code throws. The first symptom was <code>/api/overview</code> returning Cloudflare 1101 with <code>no such column: seen_count</code>, which names one column and hides the other fifty. Recorded as <code>migrate_v22_drift.sql</code> and <code>migrate_v23_missing_tables.sql</code>.</p>
+<p>The column budget bit immediately: all 31 drifted <code>creators</code> columns would have put the table at <b>111 against D1's 100-column result-set cap</b>, breaking every <code>SELECT c.*</code> in the engine. Only the 16 the retained code reads were added, the 15 per-channel ones were dropped with the code that named them, and the table sits at 95.</p>
+</div>
+
+<div class="box">
+<p><span class="k">3. <code>deploy.sh</code> probed a route with a hardcoded creator id</span> from the original database, so that check failed on every fork deploy with "no such creator", reading like a broken route rather than a check that was never portable. Dropped: a check that always fails is a check nobody reads.</p>
+</div>
+
+<h3>A fourth, in the test suite</h3>
+<p>The first version of the isolation guard had its regex escapes mangled and returned <code>undefined</code> for every key, so the test comparing the two database ids compared <code>undefined</code> to <code>undefined</code> and <b>passed</b>. A guard that passes vacuously is worse than the bug it was written to catch. It parses by hand now and throws on a missing key.</p>
+
+<h3>What remains before anything can send</h3>
+<ul>
+<li>Sending domains registered and warmed, ten inboxes across two.</li>
+<li>A new Instantly workspace, and its campaign verified <code>status=1</code> with one real send to a controlled address.</li>
+<li><code>ANTHROPIC_API_KEY</code> as a Pages secret, tested by attempting a real draft rather than by checking the secret exists.</li>
+<li>Sequences, drafting prompts and the tone register for this motion.</li>
+<li>The dashboard trim, and the new Posts board.</li>
+<li>Buckets 1 and 2 imported and qualified.</li>
+</ul>
 
 <hr>
 <p class="n">Built on <code>farooqchisty-hub/outreach-engine</code>. Source data: PushOwl partner export (838 rows, 1 Sep 2026) and the Klaviyo partner directory workbook (637 agencies, pulled 2 Jul 2026). Individual names, emails and the 13-agency overlap list are deliberately not reproduced here; they live in the private repo.</p>
