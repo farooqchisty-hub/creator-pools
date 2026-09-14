@@ -247,7 +247,6 @@ li_consistency      INTEGER  -- of last 10, how many cleared 3 reactions
 li_relevance        INTEGER  -- of last 10, how many were on-topic
 seeding_tier        TEXT     -- 'A' pay | 'B' no-fee ask | 'C' excluded
 reach_cap_usd       INTEGER
-conflict_disclosed  INTEGER  -- bucket 1 only, whether the conflict was named
 </code></pre>
 
 <p>New columns on <code>offers</code>:</p>
@@ -446,16 +445,35 @@ export function evaluateSeedingCounter({ quote, theirCounter, medianReactions,
 <li><span class="k">C</span>, dead, off-topic or company voice. Excluded.</li>
 </ul>
 
-<h3>Data source and cost</h3>
-<p>All of it through <code>treg</code>, which carries the keys. Verified live on 15 September.</p>
+<h3>Data source, measured</h3>
+<p>All of it through <code>treg</code>, whose routed endpoints carry their own provider keys. Balance on the <code>pushowl</code> team is <b>$104.95</b>. Every figure below was run live on 15 September against real rows from the partner export, not quoted from a catalogue.</p>
+
 <table>
-<tr><th>Job</th><th>Endpoint</th><th>Unit cost</th></tr>
-<tr><td>Profile, followers, headline</td><td><code>treg.linkedin.user.profile</code> (routed, 6 providers)</td><td>$0.0015</td></tr>
-<tr><td>Recent posts and dates</td><td><code>harvestapi.linkedin.user.posts</code> or <code>tikhub</code></td><td>$0.001&ndash;0.004</td></tr>
-<tr><td>Keyword post sweep</td><td><code>harvestapi.linkedin.post.search</code></td><td>$0.004 per 50 results</td></tr>
-<tr><td>LinkedIn URL resolution for bucket 3</td><td><code>treg</code> people search</td><td>~$0.01</td></tr>
+<tr><th>Job</th><th>Endpoint</th><th>Measured</th></tr>
+<tr><td>Email &rarr; person + LinkedIn URL</td><td><code>treg.people.enrich</code>, routed over 15 providers</td><td><b>7 of 10</b> resolved to a personal <code>/in/</code> profile. ~$0.022 per call as routed</td></tr>
+<tr><td>Fallback when email misses</td><td>same endpoint, <code>{domain, full_name}</code> variant</td><td>Recovered 1 of the 3 misses</td></tr>
+<tr><td>Recent posts, dates, reactions</td><td><code>harvestapi.linkedin.user.posts</code></td><td>$0.004</td></tr>
+<tr><td>Profile, followers, headline</td><td><code>treg.linkedin.user.profile</code>, routed over 6 providers</td><td>$0.0015</td></tr>
+<tr><td>Keyword post sweep</td><td><code>harvestapi.linkedin.post.search</code></td><td>$0.004 per 50 results, 266 results/month on "Klaviyo"</td></tr>
 </table>
-<p class="n">Whole-programme enrichment lands under $100 a month at the volumes in section 12. Note that Farooq's own ScrapeCreators key is <b>out of credits</b>; treg's routed keys work regardless and should be the only path used.</p>
+
+<p>The two unrecovered misses were a role mailbox (<code>partnerships@</code>) and a generic address, which is the correct outcome: there is no person behind them to resolve. So <b>70% of bucket 3 gets a LinkedIn URL</b>, and the remainder is mostly rows that should not be in the programme anyway. The 173 free-mail partners will resolve worse and are deprioritised.</p>
+
+<p>Bucket 1 needs none of this: the Klaviyo workbook already carries <code>linkedin_profile</code> on every contact.</p>
+
+<h3>Running cost</h3>
+<table>
+<tr><th>Line</th><th>Cost</th></tr>
+<tr><td>Bucket 3 resolution, 760 rows one time</td><td>~$17</td></tr>
+<tr><td>Staleness pull, ~730 resolved profiles one time</td><td>~$3</td></tr>
+<tr><td>Daily post sweep, 9 keywords &times; 6 pages</td><td>~$6.50/month</td></tr>
+<tr><td>Bucket 2 enrichment, ~1,500/month</td><td>~$39/month</td></tr>
+<tr><td>Re-qualification of the live pool, monthly</td><td>~$4/month</td></tr>
+<tr><td><b>Steady state</b></td><td><b>$45 to $65 a month</b></td></tr>
+</table>
+
+<h3>Fallbacks</h3>
+<p>Nothing here is single-sourced. <code>treg.people.enrich</code> routes over 15 providers and <code>treg.linkedin.user.profile</code> over 6, cheapest first, and misses on per-success providers are free. If treg itself were unavailable, the same jobs run on a direct ScrapeCreators key, a direct HarvestAPI key, or Apify, all of which the creator engine has used. The programme's own ScrapeCreators key is currently out of credits, which is why treg is the default path and not a fallback.</p>
 
 <h2 id="buckets">12. The three buckets</h2>
 
@@ -478,29 +496,23 @@ export function evaluateSeedingCounter({ quote, theirCounter, medianReactions,
 <li>A cross-channel collision guard matters more here than on creators, because bucket 1 and 3 people are reachable on both email and LinkedIn.</li>
 </ul>
 
-<h2 id="b1">13. Bucket 1 and the conflict</h2>
+<h2 id="b1">13. Bucket 1, played straight</h2>
 
-<p>Including bucket 1 is the decision. It needs its own variant, because the objection is real and will be raised: a Platinum or Elite Master tier is worth far more in referrals than $250, and asking someone to risk it quietly is asking them to do something they may regret.</p>
+<p>Bucket 1 is in, and it is pitched exactly like the other two. Their Klaviyo tier is their business, not a problem we apologise for in advance. <b>Klaviyo is not mentioned in the opener at all.</b> Naming it hands them a reason to say no before they have heard the offer, and hedging the offer devalues it.</p>
 
-<p>So do not ask quietly. The bucket 1 opener <b>names the conflict itself</b>, in one line, before they have to:</p>
+<p>The frame is the offer, and the offer is strong: a selective paid programme, limited slots, and we came to them. An agency owner who reads that as a conflict will say so, and that reply routes to a human. Nobody needs the objection pre-loaded on our behalf.</p>
 
-<blockquote><p class="n">"You are a Klaviyo Master partner, so this may not be for you, and I would rather say that up front than have you find out three emails in."</p></blockquote>
-
-<p>Four consequences, all of them good:</p>
-<ol>
-<li>It filters out the people who would have said yes and then withdrawn, which is the expensive outcome.</li>
-<li>It reads as candid rather than as a competitor sneaking up on them, which is the reputational risk of running this list at all.</li>
-<li>It makes the mandatory disclosure consistent with the pitch rather than a surprise at approval time.</li>
-<li>The people who continue are self-selected as genuinely platform-agnostic, which is exactly who is worth $250.</li>
-</ol>
-
-<p>Operational rules for this bucket specifically:</p>
+<p>Operational rules for this bucket:</p>
 <ul>
-<li>One contact per agency, ever. Inviting three people from one firm on one day reads as a scrape.</li>
-<li><code>conflict_disclosed</code> must be 1 before the queue will accept an opener for a bucket 1 row. Enforced, not documented.</li>
-<li>Any reply raising the conflict escalates rather than being answered by the drafter.</li>
-<li>Do not pitch Brevo's product to them. They know the category better than most. The ask is the post, not a migration.</li>
+<li>One contact per agency, ever. Inviting three people from one firm on one day reads as a scrape, not as restraint about competitors.</li>
+<li>Anyone mid-sequence on the existing partner-programme ABM is suppressed until that sequence closes. Two motions on one profile burns both.</li>
+<li>If they raise the Klaviyo relationship themselves, it escalates to a human. That is routing, not deference.</li>
+<li>The ask is the post. Not a migration, not a product pitch. They know the category.</li>
 </ul>
+
+<div class="box">
+<p><span class="k">One thing that is not negotiable and is not the same thing.</span> The <b>paid disclosure on the published post</b> stays mandatory and still gates the payout. That is FTC, ASA and LinkedIn terms compliance on a piece of published advertising. It has nothing to do with how the offer is pitched, and it is not a hedge.</p>
+</div>
 
 <h2 id="deliver">14. Deliverable, approval and payout</h2>
 
@@ -548,7 +560,6 @@ export function evaluateSeedingCounter({ quote, theirCounter, medianReactions,
 <li><code>PROGRAM_CEILING</code> is declared exactly once. A second literal is not a safety net, it is a second opinion.</li>
 <li>A message containing a digit cannot be queued for a creator with no <code>quoted_fee_usd</code>.</li>
 <li>The opener contains no currency symbol and no figure, for every bucket.</li>
-<li>A bucket 1 opener cannot be queued with <code>conflict_disclosed = 0</code>.</li>
 <li><code>concession_used = 1</code> with a null <code>concession_traded_for</code> is rejected.</li>
 <li><code>priced_messages</code> never exceeds 3.</li>
 <li>A ghost never increases the offer.</li>
@@ -582,7 +593,7 @@ export function evaluateSeedingCounter({ quote, theirCounter, medianReactions,
 <tr><td>Posts in quarter one</td><td>40&ndash;90</td></tr>
 <tr><td>Average settled fee</td><td>$120&ndash;190, given the $150 accept-outright floor and the $250 ceiling</td></tr>
 <tr><td>Cash out, quarter one</td><td><b>$6,000&ndash;$16,000</b></td></tr>
-<tr><td>Enrichment and sourcing</td><td>under $100/month</td></tr>
+<tr><td>Enrichment and sourcing</td><td>$45 to $65/month, measured</td></tr>
 <tr><td>Drafting</td><td>~$13/day at full tilt on Sonnet</td></tr>
 <tr><td>Sending</td><td>10 inboxes across 2 domains</td></tr>
 </table>
@@ -595,7 +606,7 @@ export function evaluateSeedingCounter({ quote, theirCounter, medianReactions,
 <tr><th>Risk</th><th>Mitigation</th></tr>
 <tr><td>The quote-relative ladder lets the counterparty set our budget</td><td><code>PROGRAM_CEILING</code> and <code>reach_cap</code>, both independent of Q</td></tr>
 <tr><td>Partners compare notes and find different rates</td><td>Budget framing, never worth framing. The number is explained by the campaign's budget, not by their value</td></tr>
-<tr><td>Klaviyo partners feel targeted</td><td>The conflict is named in the opener, section 13</td></tr>
+<tr><td>Klaviyo partners feel targeted</td><td>Klaviyo is never named in the opener. The offer stands on its own and an objection routes to a human, section 13</td></tr>
 <tr><td>Undisclosed paid posts</td><td>Disclosure gates the payout, enforced in code and tested</td></tr>
 <tr><td>Deliverability across 2,500 cold contacts</td><td>New domains, no tracking on the opener, no links until follow-up 2, plain text, 25 per inbox per day</td></tr>
 <tr><td>Agreed but never posted</td><td>Separate chase job; nothing is paid before the post is live</td></tr>
