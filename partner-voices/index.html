@@ -1,0 +1,639 @@
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Partner Voices: build plan</title>
+<style>
+:root{--ink:#111418;--mut:#5b6572;--line:#e3e7ec;--bg:#fff;--soft:#f6f8fa;--acc:#0b996e;--warn:#b45309;--err:#b91c1c;--code:#f2f4f7}
+@media(prefers-color-scheme:dark){:root{--ink:#e7ebf0;--mut:#98a2b3;--line:#232a33;--bg:#0e1116;--soft:#151a21;--acc:#34d399;--warn:#f59e0b;--err:#f87171;--code:#161b22}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:56px 22px 120px}
+h1{font-size:2.1rem;line-height:1.16;letter-spacing:-.022em;margin:0 0 .3em}
+h2{font-size:1.32rem;letter-spacing:-.014em;margin:3.2em 0 .7em;padding-top:1.1em;border-top:1px solid var(--line)}
+h3{font-size:1.02rem;letter-spacing:-.006em;margin:2em 0 .5em}
+p,li{color:var(--ink)}
+.lede{font-size:1.08rem;color:var(--mut);margin:0 0 .4em}
+.meta{color:var(--mut);font-size:.85rem;margin:0 0 2.4em}
+table{width:100%;border-collapse:collapse;margin:1.1em 0;font-size:.9rem;display:block;overflow-x:auto}
+th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+code{font:.87em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .34em;border-radius:4px}
+pre{background:var(--code);padding:14px 16px;border-radius:9px;overflow-x:auto;font-size:.83rem;line-height:1.55;border:1px solid var(--line)}
+pre code{background:none;padding:0}
+.box{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--acc);padding:14px 18px;border-radius:0 8px 8px 0;margin:1.3em 0}
+.box.w{border-left-color:var(--warn)} .box.e{border-left-color:var(--err)}
+.box p:first-child{margin-top:0}.box p:last-child{margin-bottom:0}
+.k{font-weight:600}
+ul,ol{padding-left:1.3em}li{margin:.28em 0}
+.toc{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:16px 22px;margin:2em 0 0;font-size:.9rem}
+.toc ol{margin:.3em 0;padding-left:1.4em;columns:2;column-gap:2.4em}
+.toc a{color:var(--ink);text-decoration:none}.toc a:hover{color:var(--acc)}
+.tag{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.14em .5em;border-radius:4px;background:var(--code);color:var(--mut)}
+.tag.keep{background:rgba(11,153,110,.13);color:var(--acc)}
+.tag.rw{background:rgba(180,83,9,.14);color:var(--warn)}
+.tag.del{background:rgba(185,28,28,.12);color:var(--err)}
+.n{color:var(--mut);font-size:.86rem}
+hr{border:0;border-top:1px solid var(--line);margin:2.6em 0}
+@media(max-width:620px){.toc ol{columns:1}h1{font-size:1.7rem}}
+</style>
+<div class="wrap">
+
+<h1>Partner Voices</h1>
+<p class="lede">A LinkedIn seeding engine for Brevo Ecom. Build plan, v1.</p>
+<p class="meta">15 September 2026 &middot; Farooq Chisty &middot; supersedes nothing, first spec</p>
+
+<div class="box">
+<p><span class="k">One paragraph.</span> Pay agency owners, ecommerce marketers and DTC founders to post on their own LinkedIn accounts about Brevo Ecom. Reach them by cold email with no figure in it. Get them to quote a rate, counter at half, settle no higher than three quarters, cap everything at $250. Qualify on whether they actually post, not on how many followers they have. Build it by forking the existing <code>outreach-engine</code> repo rather than writing anything new.</p>
+</div>
+
+<div class="toc">
+<ol>
+<li><a href="#d">Decisions locked</a></li>
+<li><a href="#base">Base: fork outreach-engine</a></li>
+<li><a href="#port">Forward-port list</a></li>
+<li><a href="#infra">Infrastructure</a></li>
+<li><a href="#config">campaign.json</a></li>
+<li><a href="#mods">Module keep / rewrite / delete</a></li>
+<li><a href="#schema">Schema changes</a></li>
+<li><a href="#policy">seeding.js, the money policy</a></li>
+<li><a href="#state">State machine and sequences</a></li>
+<li><a href="#esc">Escalation matrix</a></li>
+<li><a href="#qual">Qualification: the anti-stale gate</a></li>
+<li><a href="#buckets">The three buckets</a></li>
+<li><a href="#b1">Bucket 1 and the conflict</a></li>
+<li><a href="#deliver">Deliverable, approval, payout</a></li>
+<li><a href="#ui">Dashboard</a></li>
+<li><a href="#tests">Guards and tests</a></li>
+<li><a href="#ops">Ops</a></li>
+<li><a href="#phases">Build phases</a></li>
+<li><a href="#econ">Economics</a></li>
+<li><a href="#risk">Risks and open items</a></li>
+</ol>
+</div>
+
+<h2 id="d">1. Decisions locked</h2>
+
+<table>
+<tr><th>Decision</th><th>Value</th><th>Why</th></tr>
+<tr><td>Buckets in scope</td><td>All three</td><td>PushOwl partners, Klaviyo Master partners, and net-new people posting about Klaviyo</td></tr>
+<tr><td>Opener carries a figure</td><td>No</td><td>A dollar amount in a cold opener hurts both deliverability and the negotiating position</td></tr>
+<tr><td>Opener signals paid</td><td>Yes, by follow-up 1 at the latest</td><td>"Content collaboration" with no compensation signal reads as a free-work ask to an agency owner</td></tr>
+<tr><td>Our counter</td><td><code>0.50 &times; quote</code></td><td>Anchor low, leave room for exactly one move</td></tr>
+<tr><td>Maximum payable</td><td><code>0.75 &times; quote</code></td><td>Meeting halfway. Above it we walk</td></tr>
+<tr><td>Concession count</td><td>One, always conditional</td><td>A free improvement teaches them the number keeps moving</td></tr>
+<tr><td>Priced messages from us</td><td>Three maximum</td><td>Counter, conditional move, close</td></tr>
+<tr><td><code>PROGRAM_CEILING</code></td><td><b>$250</b></td><td>At the LinkedIn CPM of $25 this is ~10,000 impressions. Above it, paid ads beat the programme</td></tr>
+<tr><td><code>ACCEPT_OUTRIGHT</code></td><td><b>$150</b></td><td>Haggling under this costs more in goodwill than it saves in cash</td></tr>
+<tr><td><code>reach_cap</code></td><td><code>median_reactions &times; 50 &times; $0.025</code></td><td>Stops a confident negotiator with a dead feed getting paid like a live one</td></tr>
+<tr><td>Payable</td><td><code>min(0.75Q, 250, reach_cap)</code></td><td>Three independent brakes, any one of which binds</td></tr>
+<tr><td>Disclosure</td><td>Mandatory, payout refused without it</td><td>FTC, ASA and LinkedIn terms. Also makes the Klaviyo conflict visible up front</td></tr>
+<tr><td>Payout</td><td>One payment, after the post is live and verified, via Tolt</td><td>Standing rule. No advance, no staged split</td></tr>
+<tr><td>Per-person cap</td><td>2 posts per quarter</td><td>Without it one enthusiast invoices fifteen times</td></tr>
+</table>
+
+<div class="box w">
+<p><span class="k">The guardrail that matters most.</span> The ladder is a percentage of <em>their</em> number, which means without an absolute cap the counterparty sets our budget. A $2,000 quote yields $1,500 at "halfway", fifteen times the original intent, and the existing <code>HARD_CEILING_USD</code> of $1,000 would not stop it. <code>PROGRAM_CEILING</code> and <code>reach_cap</code> are not nice-to-haves, they are the reason this model is safe to automate.</p>
+</div>
+
+<h2 id="base">2. Base: fork outreach-engine, not the creator engine</h2>
+
+<p><code>farooqchisty-hub/outreach-engine</code> is already the config-driven, forkable extraction of the creator engine: <code>config/campaign.json</code> is the whole customisation surface, <code>src/identity.js</code> is generated from it, <code>templates/</code> holds every file whose copy can reach a recipient, and <code>scripts/preflight.mjs</code> refuses to deploy a half-rebranded fork. Its <code>motion.kind</code> enum already lists <code>partner_seeding</code>.</p>
+
+<p>Fork that. Do not extend the live creator engine, and do not copy the monolith. Four reasons:</p>
+
+<ol>
+<li><span class="k">The D1 column ceiling is already reached.</span> <code>creators</code> is 96 columns wide and D1 caps a result set at 100. The pipeline select is already at exactly 100 with joined offer columns, and two offer columns were dropped to make room. This build needs roughly eleven new columns. It does not fit.</li>
+<li><span class="k">The live engine is holding real money and live threads.</span> Adding a second, differently-shaped money policy into <code>negotiation.js</code> puts the creator campaign at risk for no benefit.</li>
+<li><span class="k">Carve-outs are the known bug class.</span> The cloud cutover produced six instances of "a check that was true before the work moved and false after". Conditional gates keyed on <code>creator_kind</code> across the pricing gate, the proof-of-work gate and the evidence rule would manufacture the same class deliberately.</li>
+<li><span class="k">The separation is wanted anyway</span> at the Instantly workspace and sending-domain level, so the split is not artificial.</li>
+</ol>
+
+<h2 id="port">3. Forward-port list</h2>
+
+<p><code>outreach-engine</code> was extracted around 3 September and the creator engine hardened considerably after that. Port these <b>before</b> writing any new feature. Each one is a defect that has already cost something.</p>
+
+<table>
+<tr><th>Port</th><th>From</th><th>Why it is not optional</th></tr>
+<tr><td><code>migrate_v19.sql</code></td><td>creator engine</td><td><code>idx_queue_creator</code> on <code>outreach_queue(creator_id, status, kind)</code>. Its absence was <b>97% of all D1 reads</b>, 1.89 billion rows in a day, from one correlated scalar subquery full-scanning the queue per candidate. Ship the index with the schema, not after the outage</td></tr>
+<tr><td><code>migrate_v16</code> to <code>v20</code></td><td>creator engine</td><td>Everything else after v15, which is where the fork stopped</td></tr>
+<tr><td><code>src/draft.js</code></td><td>creator engine</td><td>Cloud drafting. Without it the engine depends on local Claude Code sessions, which die silently on a weekly spend limit and keep reporting <code>enabled</code></td></tr>
+<tr><td><code>src/salutation.js</code></td><td>creator engine</td><td>The greeting gate. Compares the first line against the stored name. Both source sheets carry real first names, so this is cheap to satisfy and expensive to get wrong</td></tr>
+<tr><td><code>src/exceptions.js</code></td><td>creator engine</td><td><code>manual_exception</code> with its five kinds. A row whose numbers are confidently wrong needs a way for a human to say so that blocks automation without suppressing the record</td></tr>
+<tr><td><code>src/schema.js</code> + the deploy guard</td><td>creator engine</td><td><code>deploy.sh</code> refuses to ship when the generated column list drifts from the live table. The drift is silent otherwise</td></tr>
+<tr><td><code>src/onboarding.js</code>, <code>src/tolt.js</code></td><td>creator engine</td><td>Tolt onboarding and sync, used verbatim</td></tr>
+<tr><td>Instantly campaign-status guard</td><td><code>src/instantly.js</code></td><td>A lead added to a <code>status=3</code> campaign returns 200 and sends nothing. That fiction produced ~98 phantom sends. <code>sendOpener</code> must read <code>GET /campaigns/{id}</code> and skip when status is not 1, failing open on a read error</td></tr>
+<tr><td><code>pollInstantly</code> pagination fix</td><td>creator engine</td><td>Advancing the watermark from one page of 50 permanently lost every reply older than that page. Page to exhaustion, advance only when <code>exhausted</code></td></tr>
+<tr><td><code>ingestInbound</code> email fallback</td><td>creator engine</td><td>Resolving senders only through <code>contact_points</code> silently dropped 61% of emailable repliers. Fall back to <code>LOWER(creators.email)</code>. Those two bugs together ate 89 real replies over six days</td></tr>
+<tr><td><code>coldSentToday</code> discipline</td><td>creator engine</td><td>Cold caps must never be measured with <code>channelSentToday</code>, which includes replies. On reply-heavy days cold volume silently went to zero</td></tr>
+</table>
+
+<div class="box e">
+<p><span class="k">The gate that will kill this engine on day 3 if it is not handled.</span> <code>POST /api/queue</code> refuses a <code>followup</code> with a 409 "no proof of work" for any creator holding no real post. Seeding partners hold no tracked posts by definition, exactly like the Gmail recontact cohort whose 18 due follow-ups were blocked forever while the scheduler re-raised them. The 409 text says <code>force:true</code> is not a way around it, and <em>force does in fact bypass it</em>, which makes it a trap rather than a fix. This fork must <b>delete the proof-of-work gate outright</b>, not carve an exception into it. It exists to protect a creator fee justified by a creator's published work. This motion has no such fee.</p>
+</div>
+
+<h2 id="infra">4. Infrastructure</h2>
+
+<table>
+<tr><th>Thing</th><th>Value</th></tr>
+<tr><td>Repo</td><td><code>farooqchisty-hub/brevo-partner-voices</code>, private, forked from <code>outreach-engine</code></td></tr>
+<tr><td>Local path</td><td><code>~/claude fc/brevo-partner-voices</code></td></tr>
+<tr><td>D1</td><td><code>partner-voices</code>, new database, no shared rows with the creator engine</td></tr>
+<tr><td>Pages</td><td><code>brevo-partner-voices.pages.dev</code>, serves dashboard and the whole API</td></tr>
+<tr><td>Worker</td><td><code>brevo-partner-voices</code>, cron and the Instantly webhook only, no assets block</td></tr>
+<tr><td>Cron</td><td>5 minutes, matching the creator engine. Reply latency is bounded by it twice over</td></tr>
+<tr><td>Credentials</td><td><code>~/.partner_voices.json</code></td></tr>
+<tr><td>Drafting</td><td><code>claude-sonnet-5</code>. <code>MODEL</code> and <code>PRICE_PER_MTOK</code> move together, enforced by a test</td></tr>
+<tr><td>Instantly</td><td><b>New workspace.</b> Not the shared one</td></tr>
+<tr><td>Sending domain</td><td>New, separate from the creator engine's. Never <code>brevo.com</code></td></tr>
+<tr><td>Inboxes</td><td>10 across 2 domains, warmed before launch</td></tr>
+<tr><td>LinkedIn</td><td>Read-only through treg for qualification. No automated LinkedIn sending in v1</td></tr>
+</table>
+
+<div class="box">
+<p><span class="k">Why a new Instantly workspace.</span> The current one is owned outside the team and carries six members including a Brevo colleague as editor. Instantly notifies every member on a positive reply. Under this model every thread contains a live price negotiation, so the entire ladder would be readable by five PushOwl colleagues, and one of them already asked in Slack about a creator's quote that reached them this way.</p>
+</div>
+
+<h2 id="config">5. campaign.json</h2>
+
+<p>One file drives the fork. The <code>pricing</code> block in <code>outreach-engine</code> is absolute-tier shaped and does not describe a quote-relative ladder, so it gains a <code>seeding</code> block. Everything else is filled in from the existing surface.</p>
+
+<pre><code>{
+  "engine": { "slug": "partner-voices", "display_name": "Partner Voices" },
+  "motion": {
+    "kind": "partner_seeding",
+    "fee_allowed": true,
+    "partner_program_name": "Brevo Ecom Partner Voices",
+    "qualify_on": "content",
+    "what_we_are_asking_for":
+      "One LinkedIn post in their own words on a topic they choose from three,
+       drafted by them, reviewed once by us, disclosed as paid, posted by them."
+  },
+  "pricing": {
+    "enabled": true, "currency": "USD",
+    "mode": "quote_relative",
+    "seeding": {
+      "counter_fraction": 0.50,
+      "max_fraction": 0.75,
+      "program_ceiling": 250,
+      "accept_outright_below": 150,
+      "reach_cap": { "impressions_per_reaction": 50, "cpm": 25 },
+      "max_priced_messages": 3,
+      "concessions": 1,
+      "concession_must_be_conditional": true,
+      "posts_per_person_per_quarter": 2
+    },
+    "non_cash_levers": [
+      "Brevo amplification of the post",
+      "partner directory placement",
+      "a published case study",
+      "early access",
+      "a co-hosted session"
+    ]
+  },
+  "safety": {
+    "sending_enabled": false,
+    "require_human_approval": true,
+    "followup_days": [3, 8, 15]
+  },
+  "channels": {
+    "email":    { "enabled": true,  "daily_cap": 250, "provider": "instantly" },
+    "linkedin": { "enabled": false, "daily_cap": 0 },
+    "instagram":{ "enabled": false },
+    "x":        { "enabled": false }
+  }
+}
+</code></pre>
+
+<h2 id="mods">6. Module keep / rewrite / delete</h2>
+
+<table>
+<tr><th>File</th><th>Action</th><th>Notes</th></tr>
+<tr><td><code>lib.js</code></td><td><span class="tag keep">keep</span></td><td>State machine, quotas, gates, audit. The single biggest reuse win</td></tr>
+<tr><td><code>index.js</code></td><td><span class="tag rw">trim</span></td><td>7,376 lines. Delete the Instagram, X, Gmail-candidate, transcription and cream routes. Expect roughly 4,500 after</td></tr>
+<tr><td><code>instantly.js</code></td><td><span class="tag keep">keep</span></td><td>With the campaign-status guard ported</td></tr>
+<tr><td><code>draft.js</code></td><td><span class="tag rw">rewrite prompts</span></td><td>Machinery kept, tone register and the per-state prompts are new</td></tr>
+<tr><td><code>sequences.js</code></td><td><span class="tag rw">rewrite</span></td><td>New email ladder, new reply-stage ladders. Shapes not scripts, unchanged principle</td></tr>
+<tr><td><code>negotiation.js</code></td><td><span class="tag rw">replace core</span></td><td>Keep <code>OUTCOME</code>, the audit trail and <code>assertWithinCeiling</code>. Replace <code>evaluateCounter</code> with <code>evaluateSeedingCounter</code>. Keep the file's safety contract: one module decides what a counteroffer means</td></tr>
+<tr><td><code>budget.js</code></td><td><span class="tag rw">rewrite</span></td><td>Becomes the three caps. No blind band, no CPM tiers, no flex band</td></tr>
+<tr><td><code>qualify.js</code></td><td><span class="tag rw">rewrite</span></td><td>1,039 lines of creator content scoring replaced by the anti-stale gate. Keep the language gate and the append-only <code>qualification_runs</code> discipline</td></tr>
+<tr><td><code>enrich.js</code></td><td><span class="tag rw">rewrite</span></td><td>Targets treg LinkedIn endpoints instead of Instagram enrichment</td></tr>
+<tr><td><code>targeting.js</code></td><td><span class="tag rw">rewrite</span></td><td>Three named buckets replace the creator ICP profile</td></tr>
+<tr><td><code>motion.js</code></td><td><span class="tag rw">simplify</span></td><td>One motion. Most of the file is choosing between motions</td></tr>
+<tr><td><code>salutation.js</code>, <code>exceptions.js</code>, <code>emailquality.js</code>, <code>tolt.js</code>, <code>onboarding.js</code>, <code>factcheck.js</code>, <code>tags.js</code>, <code>identity.js</code>, <code>schema.js</code></td><td><span class="tag keep">keep</span></td><td>Verbatim, after the forward-port</td></tr>
+<tr><td><code>pricing.js</code></td><td><span class="tag del">delete</span></td><td>478 lines of CPM modelling. There is no model price here, only their quote</td></tr>
+<tr><td><code>gmail.js</code></td><td><span class="tag del">delete</span></td><td>The Gmail opener pool degraded to role mailboxes and has no reject route. Do not inherit it</td></tr>
+<tr><td><code>market.js</code>, <code>cream.js</code></td><td><span class="tag del">delete</span></td><td>Creator market rates and cream detection, both meaningless here</td></tr>
+<tr><td><code>runner/</code></td><td><span class="tag del">delete in v1</span></td><td>Instagram, X and local Whisper. No channel in this build uses them</td></tr>
+<tr><td><code>dm_mining/</code></td><td><span class="tag del">delete</span></td><td>Creator engine archaeology</td></tr>
+<tr><td>New: <code>src/seeding.js</code></td><td><span class="tag rw">new</span></td><td>The ladder. Section 8</td></tr>
+<tr><td>New: <code>src/staleness.js</code></td><td><span class="tag rw">new</span></td><td>The qualification gate. Section 11</td></tr>
+<tr><td>New: <code>src/sourcing.js</code></td><td><span class="tag rw">new</span></td><td>The daily LinkedIn post sweep for bucket 2</td></tr>
+<tr><td>New: <code>src/deliverable.js</code></td><td><span class="tag rw">new</span></td><td>Post verification and payout release. Section 14</td></tr>
+</table>
+
+<h2 id="schema">7. Schema changes</h2>
+
+<p>Tables kept as-is: <code>creators</code>, <code>conversations</code>, <code>conv_messages</code>, <code>contact_points</code>, <code>outreach_queue</code>, <code>offers</code>, <code>negotiation_events</code>, <code>sending_identities</code>, <code>daily_quotas</code>, <code>suppression</code>, <code>agent_runs</code>, <code>incidents</code>, <code>audit_events</code>, <code>stage_history</code>, <code>qualification_runs</code>, <code>campaigns</code>, <code>campaign_brief_versions</code>, <code>config</code>, <code>integrations</code>, <code>heartbeats</code>, <code>learned_rules</code>, <code>tolt_partners</code>.</p>
+
+<p>Dropped: <code>posts</code> (Instagram post captures), <code>profile_snapshots</code>, <code>social_identities</code>, <code>gmail_candidates</code>, <code>flex_log</code>, <code>drafts</code>, <code>messages</code>, <code>events</code>, <code>tasks</code>.</p>
+
+<p>New columns on <code>creators</code>. Eleven, comfortably inside the 100-column cap on a table stripped of the Instagram and X fields.</p>
+
+<pre><code>bucket              TEXT     -- 'pushowl_partner' | 'klaviyo_partner' | 'klaviyo_poster'
+li_url              TEXT
+li_followers        INTEGER
+li_last_post_at     TEXT
+li_posts_90d        INTEGER
+li_median_reactions INTEGER
+li_consistency      INTEGER  -- of last 10, how many cleared 3 reactions
+li_relevance        INTEGER  -- of last 10, how many were on-topic
+seeding_tier        TEXT     -- 'A' pay | 'B' no-fee ask | 'C' excluded
+reach_cap_usd       INTEGER
+conflict_disclosed  INTEGER  -- bucket 1 only, whether the conflict was named
+</code></pre>
+
+<p>New columns on <code>offers</code>:</p>
+
+<pre><code>quoted_fee_usd      INTEGER  -- Q, what they asked for
+quoted_at           TEXT
+priced_messages     INTEGER  -- our count, hard-capped at 3
+concession_used     INTEGER
+concession_traded_for TEXT   -- refuses to be null when concession_used = 1
+</code></pre>
+
+<p>New table <code>deliverables</code>, one row per commissioned post:</p>
+
+<pre><code>id, creator_id, offer_id,
+brief_version, topic_chosen,
+draft_submitted_at, draft_approved_at, draft_approved_by,
+posted_at, post_url,
+disclosure_verified INTEGER, disclosure_verified_at,
+reactions_48h, reactions_7d, comments_7d,
+payout_released_at, payout_amount_usd, tolt_ref,
+status  -- briefed | drafted | approved | posted | verified | paid | abandoned
+</code></pre>
+
+<div class="box">
+<p><span class="k">Keep the two BEFORE triggers on <code>offers</code></span> that abort any write above the ceiling, retargeted to <code>PROGRAM_CEILING</code>. The creator engine proved the point the hard way: the ceiling was declared as a literal in two files, they disagreed by $200, and the looser one decided what to offer. One number, enforced in the database as well as the code.</p>
+</div>
+
+<h2 id="policy">8. seeding.js, the money policy</h2>
+
+<p>One module decides what a counteroffer means. Everything else calls it.</p>
+
+<pre><code>// The three caps. Any one of them can bind.
+export const COUNTER_FRACTION     = 0.50;
+export const MAX_FRACTION         = 0.75;
+export const PROGRAM_CEILING_USD  = 250;
+export const ACCEPT_OUTRIGHT_USD  = 150;
+export const MAX_PRICED_MESSAGES  = 3;
+
+export function reachCap(medianReactions) {
+  // median reactions -> implied impressions -> dollars at the LinkedIn CPM
+  return Math.floor((medianReactions * 50 / 1000) * 25);
+}
+
+export function maxPayable(quote, medianReactions) {
+  return Math.min(
+    Math.floor(quote * MAX_FRACTION),
+    PROGRAM_CEILING_USD,
+    reachCap(medianReactions)
+  );
+}
+
+export function openingCounter(quote) {
+  return Math.floor(quote * COUNTER_FRACTION);
+}
+
+export function evaluateSeedingCounter({ quote, theirCounter, medianReactions,
+                                         pricedMessages, concessionUsed }) {
+  const cap = maxPayable(quote, medianReactions);
+
+  if (quote <= ACCEPT_OUTRIGHT_USD && quote <= PROGRAM_CEILING_USD)
+    return { outcome: ACCEPT, fee: quote, why: 'below the haggle threshold' };
+
+  if (openingCounter(quote) > PROGRAM_CEILING_USD)
+    return { outcome: ESCALATE, why: 'even our opening counter exceeds the programme ceiling' };
+
+  if (theirCounter == null)
+    return { outcome: COUNTER, fee: openingCounter(quote) };
+
+  if (theirCounter <= cap)
+    return { outcome: ACCEPT, fee: theirCounter };
+
+  if (concessionUsed || pricedMessages >= MAX_PRICED_MESSAGES)
+    return { outcome: WALKAWAY, why: 'above cap, concession spent' };
+
+  // The single move. It is never unconditional.
+  return { outcome: COUNTER_CONDITIONAL, fee: cap, requires_trade: true };
+}
+</code></pre>
+
+<p>Three rules the module enforces that are easy to lose:</p>
+<ul>
+<li><span class="k">Never improve into silence.</span> A ghost after our counter does not advance <code>pricedMessages</code> and never triggers a better number. Bidding against yourself is the fastest way to lose the ladder.</li>
+<li><span class="k"><code>concession_traded_for</code> cannot be null</span> when <code>concession_used = 1</code>. The database refuses it. A free improvement tells them the first number was fake.</li>
+<li><span class="k">A quote is captured once.</span> If they revise upward later, that is an escalation, not a new <code>Q</code>. Otherwise the ladder resets and the caps float.</li>
+</ul>
+
+<h3>Framing the counter</h3>
+<p>Budget language, never worth language. <em>"That is above where this campaign's per-post budget sits. I can do $X."</em> The fairness framing that a flat rate would have allowed is unavailable under a quote-relative ladder, because everyone gets a different number and agency owners in this ecosystem talk to each other. Cost, not worth, is the framing that survives them comparing notes.</p>
+
+<h2 id="state">9. State machine and sequences</h2>
+
+<pre><code>sourced -> qualified(A) -> queued -> contacted
+                                       |
+              +------------------------+--------------------+
+              |                        |                    |
+        no reply ladder          interested (S2)        explicit no
+              |                        |                    |
+         3 follow-ups            scope + rate ask       suppressed
+              |                        |
+          breakup                  quoted (S3)
+              |                        |
+          nurture 90d          counter sent (S4)
+                                       |
+                        +--------------+-------------+
+                        |              |             |
+                   accepted        their counter   ghost
+                        |              |             |
+                        |         one conditional   2 nudges
+                        |          move (S5)          |
+                        |              |          nurture
+                        +------+-------+
+                               |
+                            agreed (S6)
+                               |
+                    briefed -> drafted -> approved
+                               -> posted -> verified -> paid
+</code></pre>
+
+<h3>Cold ladder, no reply</h3>
+<table>
+<tr><th>Day</th><th>Words</th><th>Job</th></tr>
+<tr><td>0</td><td>60&ndash;90</td><td>Opener. Brevo and PushOwl named in the first two lines. No link, no attachment, no image, no open tracking. One low-cost question: "would you be open to hearing the details?"</td></tr>
+<tr><td>3</td><td>35&ndash;45</td><td>The detail held back: it is paid, and roughly what the post would cover</td></tr>
+<tr><td>8</td><td>30&ndash;40</td><td>Peer proof. Other agency owners in the same ecosystem are in the programme. No names without their permission</td></tr>
+<tr><td>15</td><td>20&ndash;25</td><td>Breakup. "Closing this one out, happy to revisit next cycle." Historically the highest-reply message of the four</td></tr>
+</table>
+<p class="n">Four touches, in-thread, then stop and nurture for 90 days. Every follow-up must carry new information; "just bumping this" is a deliverability tax.</p>
+
+<h3>The reply that asks for a number</h3>
+<p>Not sent until they answer. It does two things in one message, and the order matters.</p>
+<ol>
+<li><span class="k">Shrink the scope first.</span> One paragraph: one LinkedIn post, their own words and voice, a topic they pick from three, one review round, disclosure included, one payment after it goes live. A rate quoted against "a content collaboration" is a rate-card rate. A rate quoted against a precisely small ask is 30 to 50% lower before any negotiation.</li>
+<li><span class="k">Then ask.</span> "What is your <em>standard rate</em> for a single sponsored post like that?" <em>Standard rate</em> pulls their rate card rather than an opportunistic number. <em>Like that</em> binds it to the scope just described.</li>
+<li>Ask for their typical reach on a sponsored post in the same message. It sanity-checks the quote against the data already held, and a refusal is itself information.</li>
+</ol>
+
+<h3>Ghosted, two different ladders</h3>
+<table>
+<tr><th>Where they went quiet</th><th>Cadence</th><th>Content rule</th></tr>
+<tr><td>After saying yes, before quoting</td><td>+3d, +8d, then nurture 60d</td><td>Restate the small scope. No number. Second message closes the loop explicitly</td></tr>
+<tr><td>After our counter</td><td>+4d, +10d, then nurture</td><td><b>Invite their number, never raise ours.</b> "Does that work, or is there a number that does?" Then a warm close with no new figure</td></tr>
+</table>
+
+<h3>Close conditions</h3>
+<ul>
+<li>Agreed. Move to brief and onboarding.</li>
+<li>Their floor stays above the cap after the one conditional move.</li>
+<li>Two follow-ups after their last reply with no response.</li>
+<li>Explicit no. Thank, suppress, no re-engagement without a new reason.</li>
+<li>They want a retainer or a package rather than a per-post rate. Different conversation, not this programme's.</li>
+</ul>
+<p>Every close is warm and keeps the door open. Bucket 3 are existing partners and bucket 1 are future ones.</p>
+
+<div class="box">
+<p><span class="k">A nod is not a reply, and an autoresponder is not a reply at all.</span> On the creator engine, 14 of 18 threads flagged <code>needs_reply</code> were nods, emoji and acknowledgements where silence was correct, and one re-engagement was nearly drafted against a job-application autoresponder. Port the classifier. An out-of-office pauses the ladder until the return date rather than stacking a follow-up on top of it.</p>
+</div>
+
+<h2 id="esc">10. Escalation matrix</h2>
+
+<table>
+<tr><th>Trigger</th><th>Kind</th></tr>
+<tr><td><code>0.75Q</code> exceeds <code>PROGRAM_CEILING</code></td><td>price</td></tr>
+<tr><td><code>0.75Q</code> exceeds <code>reach_cap</code> by more than 2x</td><td>price</td></tr>
+<tr><td>Quote not in USD, or crypto, or unusual payment terms requested</td><td>price</td></tr>
+<tr><td>Advance or staged payment requested</td><td>price, answered by the standing rule but still surfaced</td></tr>
+<tr><td>Contract, MSA, invoice terms, NET-30, VAT, legal review, exclusivity</td><td>commercial</td></tr>
+<tr><td>Asks who the end client is, or confuses Brevo, PushOwl and MagicFit</td><td>positioning</td></tr>
+<tr><td>Raises their own Klaviyo or competitor partnership, or asks about conflict</td><td>positioning</td></tr>
+<tr><td>Refuses disclosure, or wants editorial control over our review</td><td>compliance, hard stop</td></tr>
+<tr><td>Complaint, negative sentiment, GDPR or deletion request</td><td>conduct</td></tr>
+<tr><td>Asks for a call</td><td>good signal, route to a human</td></tr>
+<tr><td>Anyone at one of the 13 agencies present in both source sheets</td><td>hand-run only, never automated</td></tr>
+<tr><td>Three rounds without convergence</td><td>process</td></tr>
+</table>
+
+<h2 id="qual">11. Qualification: the anti-stale gate</h2>
+
+<p>Followers are the wrong metric. A 30,000-follower agency owner who last posted in June is worth nothing. Gate on behaviour, and run it <b>before</b> outreach, never after a reply.</p>
+
+<table>
+<tr><th>Gate</th><th>Threshold</th><th>Column</th></tr>
+<tr><td>Last post recency</td><td>&le; 30 days, hard reject</td><td><code>li_last_post_at</code></td></tr>
+<tr><td>Cadence</td><td>&ge; 8 posts in 90 days</td><td><code>li_posts_90d</code></td></tr>
+<tr><td>Median reactions, last 10</td><td>&ge; 10</td><td><code>li_median_reactions</code></td></tr>
+<tr><td>Consistency</td><td>&ge; 6 of last 10 above 3 reactions</td><td><code>li_consistency</code></td></tr>
+<tr><td>Topical relevance</td><td>&ge; 3 of last 10 on ecommerce, retention, email, Shopify</td><td><code>li_relevance</code></td></tr>
+<tr><td>Entity</td><td>Personal profile, not a company page</td><td><code>account_type</code></td></tr>
+<tr><td>Employer</td><td>Not Klaviyo, Omnisend, Attentive, Postscript</td><td>exclusion list</td></tr>
+<tr><td>Language</td><td>The eight already in <code>requalify</code></td><td>ported</td></tr>
+</table>
+
+<p>Tiering, set once and never moved by a reply:</p>
+<ul>
+<li><span class="k">A</span>, passes everything. Eligible for cash. Expect 15 to 25% of any list.</li>
+<li><span class="k">B</span>, real agency, weak or stale posting. No fee. Offered co-marketing, a case study, directory placement.</li>
+<li><span class="k">C</span>, dead, off-topic or company voice. Excluded.</li>
+</ul>
+
+<h3>Data source and cost</h3>
+<p>All of it through <code>treg</code>, which carries the keys. Verified live on 15 September.</p>
+<table>
+<tr><th>Job</th><th>Endpoint</th><th>Unit cost</th></tr>
+<tr><td>Profile, followers, headline</td><td><code>treg.linkedin.user.profile</code> (routed, 6 providers)</td><td>$0.0015</td></tr>
+<tr><td>Recent posts and dates</td><td><code>harvestapi.linkedin.user.posts</code> or <code>tikhub</code></td><td>$0.001&ndash;0.004</td></tr>
+<tr><td>Keyword post sweep</td><td><code>harvestapi.linkedin.post.search</code></td><td>$0.004 per 50 results</td></tr>
+<tr><td>LinkedIn URL resolution for bucket 3</td><td><code>treg</code> people search</td><td>~$0.01</td></tr>
+</table>
+<p class="n">Whole-programme enrichment lands under $100 a month at the volumes in section 12. Note that Farooq's own ScrapeCreators key is <b>out of credits</b>; treg's routed keys work regardless and should be the only path used.</p>
+
+<h2 id="buckets">12. The three buckets</h2>
+
+<table>
+<tr><th>Bucket</th><th>Source</th><th>Raw</th><th>In scope</th><th>Notes</th></tr>
+<tr><td>3, PushOwl partners</td><td>Partner export sheet</td><td>838</td><td>~760</td><td>637 Agency Partners, 123 Inactive. All 838 have an email. 193 have at least one customer, 164 have earned commissions. Only 82 carry any handle and <b>none are LinkedIn</b>, so a resolution pass is required first. Excludes 41 tech-integration, 2 test and 1 prod row</td></tr>
+<tr><td>1, Klaviyo Master partners</td><td>Klaviyo directory workbook</td><td>637 agencies / 1,659 contacts</td><td>~200</td><td>47 Elite Master, 153 Platinum Master. <b>One contact per agency</b>, never more. Section 13</td></tr>
+<tr><td>2, posted about Klaviyo</td><td>Daily LinkedIn post sweep</td><td>~266/mo on one keyword</td><td>~1,500/mo raw</td><td>Self-selects for recency because they are sourced from a post they just made</td></tr>
+</table>
+
+<h3>Bucket 2 sourcing</h3>
+<p>One "Klaviyo" search sorted by date returns 266 posts a month at 50 per page, verified. That is too thin alone, so run a keyword matrix daily: <em>Klaviyo, Klaviyo flows, retention marketing, email marketing Shopify, lifecycle marketing, DTC email, abandoned cart, Omnisend, Attentive</em>. Dedupe by author, enrich, run the staleness gate, then find the work email.</p>
+<p>Page one of the live test contained genuine ICP (Klaviyo specialists, lifecycle consultants, DTC email freelancers), noise (a website designer, an AE at an AI search startup) and <b>Klaviyo's own employees</b>. Exclude by employer and by presence in the directory workbook.</p>
+
+<h3>Cross-bucket handling</h3>
+<ul>
+<li><span class="k">13 agencies appear in both sheets</span> (PushOwl partner and Klaviyo Master). Highest-value segment in either file. They route through bucket 3's motion, hand-run, never automated. The list lives in the repo, not here.</li>
+<li>Four exact email matches across the two sheets. Dedupe on <code>LOWER(email)</code> at import, bucket 3 wins.</li>
+<li>Bucket 1 people already mid-sequence on the partner-programme ABM are suppressed until that sequence closes. Landing a paid-post offer on the same profile mid-sequence burns both motions.</li>
+<li>A cross-channel collision guard matters more here than on creators, because bucket 1 and 3 people are reachable on both email and LinkedIn.</li>
+</ul>
+
+<h2 id="b1">13. Bucket 1 and the conflict</h2>
+
+<p>Including bucket 1 is the decision. It needs its own variant, because the objection is real and will be raised: a Platinum or Elite Master tier is worth far more in referrals than $250, and asking someone to risk it quietly is asking them to do something they may regret.</p>
+
+<p>So do not ask quietly. The bucket 1 opener <b>names the conflict itself</b>, in one line, before they have to:</p>
+
+<blockquote><p class="n">"You are a Klaviyo Master partner, so this may not be for you, and I would rather say that up front than have you find out three emails in."</p></blockquote>
+
+<p>Four consequences, all of them good:</p>
+<ol>
+<li>It filters out the people who would have said yes and then withdrawn, which is the expensive outcome.</li>
+<li>It reads as candid rather than as a competitor sneaking up on them, which is the reputational risk of running this list at all.</li>
+<li>It makes the mandatory disclosure consistent with the pitch rather than a surprise at approval time.</li>
+<li>The people who continue are self-selected as genuinely platform-agnostic, which is exactly who is worth $250.</li>
+</ol>
+
+<p>Operational rules for this bucket specifically:</p>
+<ul>
+<li>One contact per agency, ever. Inviting three people from one firm on one day reads as a scrape.</li>
+<li><code>conflict_disclosed</code> must be 1 before the queue will accept an opener for a bucket 1 row. Enforced, not documented.</li>
+<li>Any reply raising the conflict escalates rather than being answered by the drafter.</li>
+<li>Do not pitch Brevo's product to them. They know the category better than most. The ask is the post, not a migration.</li>
+</ul>
+
+<h2 id="deliver">14. Deliverable, approval and payout</h2>
+
+<p>"$100 for every post we approve" is ambiguous in a way that costs money. Define it as a sequence where approval of a draft releases nothing:</p>
+
+<ol>
+<li><b>Brief.</b> Three topics, they pick one. Versioned in <code>campaign_brief_versions</code>, the version in force recorded on the deliverable.</li>
+<li><b>Draft.</b> They write it in their own voice. We do not supply copy; a supplied post reads as an ad and defeats the entire point.</li>
+<li><b>Review.</b> One round. Factual corrections and the disclosure requirement only, not voice edits.</li>
+<li><b>Post.</b> They publish. They submit the live URL.</li>
+<li><b>Verify.</b> <code>deliverable.js</code> fetches the post and checks three things: it is live, it matches the approved draft, and the disclosure is present. <code>disclosure_verified</code> gates the payout.</li>
+<li><b>Pay.</b> Tolt onboarding link is sent <b>only now</b>, not on first interest. One payment, 3 to 5 business days. Transfer and FX charges are not covered, and that answer is given plainly with no offer of an exception.</li>
+<li><b>Measure.</b> Reactions at 48h and 7d recorded against the fee paid. By month two this gives a real cost per impression and tells you whether $250 is generous or cheap.</li>
+</ol>
+
+<div class="box w">
+<p><span class="k">Attribution is the gap that makes or breaks the budget case.</span> At $250 a post with no hook, a hundred posts is $25,000 of unmeasurable spend. Every approved post must carry either a UTM'd link or a tagged Brevo mention, and the live URL plus its engagement must be stored. Without that, this programme cannot be defended at renewal.</p>
+</div>
+
+<h2 id="ui">15. Dashboard</h2>
+
+<p>Fork <code>assets/app.js</code> whole. It is 3,205 lines of vanilla JS with no build step, a nav, a drawer, a theme toggle, a toast, one <code>api()</code> helper and thirteen page functions. The shell, the nav, the tile components and the status rail are reused unchanged.</p>
+
+<table>
+<tr><th>Page</th><th>Action</th><th>Notes</th></tr>
+<tr><td>Overview</td><td><span class="tag rw">rewrite tiles</span></td><td>Funnel becomes sourced / qualified A / contacted / replied / quoted / agreed / posted / paid. Keep the capacity bars and the quota definitions</td></tr>
+<tr><td>Inbox</td><td><span class="tag keep">keep</span></td><td>The best page in the app. <code>needs_reply</code> with last-direction, per-channel badges from the API. Reuse as-is</td></tr>
+<tr><td>Pipeline</td><td><span class="tag rw">retarget</span></td><td>Columns become bucket, tier, last post, median reactions, quote, our counter, cap, state</td></tr>
+<tr><td>Review</td><td><span class="tag rw">retarget</span></td><td>Approve or reject a queued message. Same shape, new card contents</td></tr>
+<tr><td>Rules, Settings, Activity, Sent</td><td><span class="tag keep">keep</span></td><td>Knowledge entries, config, agent runs, sent log. All motion-agnostic</td></tr>
+<tr><td>Campaign</td><td><span class="tag rw">rewrite</span></td><td>Brief versions, topics, the three caps, non-cash levers</td></tr>
+<tr><td>Analytics</td><td><span class="tag rw">rewrite</span></td><td>Cost per post, cost per thousand impressions actually delivered, quote distribution, discount achieved, walk-away rate</td></tr>
+<tr><td>Discover</td><td><span class="tag rw">replace</span></td><td>Becomes <b>Sourcing</b>: the keyword matrix, last sweep, new authors found, qualified, cost</td></tr>
+<tr><td>Platform (Instagram/X)</td><td><span class="tag del">delete</span></td><td>No such channels</td></tr>
+<tr><td>Channel pages</td><td><span class="tag rw">collapse</span></td><td>One channel in v1</td></tr>
+<tr><td>New: <b>Posts</b></td><td><span class="tag rw">new</span></td><td>The <code>deliverables</code> board. Briefed, drafted, awaiting approval, posted, verified, paid. This is the page that runs day to day once replies start landing</td></tr>
+</table>
+
+<h2 id="tests">16. Guards and tests</h2>
+
+<p>Every one of these is a defect that has already happened somewhere in this codebase. <code>deploy.sh</code> runs them and refuses to ship on a failure.</p>
+
+<ol>
+<li>A seeding offer can never exceed <code>PROGRAM_CEILING</code>, asserted in the module, at the API and by a database trigger.</li>
+<li><code>PROGRAM_CEILING</code> is declared exactly once. A second literal is not a safety net, it is a second opinion.</li>
+<li>A message containing a digit cannot be queued for a creator with no <code>quoted_fee_usd</code>.</li>
+<li>The opener contains no currency symbol and no figure, for every bucket.</li>
+<li>A bucket 1 opener cannot be queued with <code>conflict_disclosed = 0</code>.</li>
+<li><code>concession_used = 1</code> with a null <code>concession_traded_for</code> is rejected.</li>
+<li><code>priced_messages</code> never exceeds 3.</li>
+<li>A ghost never increases the offer.</li>
+<li>Cold caps read <code>coldSentToday</code>, never <code>channelSentToday</code>.</li>
+<li><code>sendOpener</code> refuses a campaign whose status is not 1.</li>
+<li>Inbound polling advances the watermark only when the page set is exhausted.</li>
+<li>Sender resolution falls back to <code>LOWER(creators.email)</code> after <code>contact_points</code>.</li>
+<li>The drafting <code>MODEL</code> and <code>PRICE_PER_MTOK</code> cannot move independently.</li>
+<li><code>src/schema.js</code> matches the live <code>creators</code> table.</li>
+<li>A payout cannot be released with <code>disclosure_verified = 0</code>.</li>
+<li>No message can be queued to an address on any protected or internal domain.</li>
+</ol>
+
+<h2 id="ops">17. Ops</h2>
+
+<ul>
+<li><b>Cron, 5 minutes</b>, in the Worker. Poll, draft, dispatch, reconcile. Per-tick budgets matched to the interval.</li>
+<li><b>Scheduled tasks</b>, ported from the creator engine's five: <code>cycle</code>, <code>monitor</code>, <code>qa</code>, <code>reconcile</code>, <code>sourcing</code>. The <code>.claude/skills/</code> routines already exist in the fork.</li>
+<li><b>Two spend limits fail differently and neither looks like a bug.</b> A Claude Code weekly individual limit kills local scheduled tasks within seconds while the task still reads <code>enabled</code> and <code>lastRunAt</code> keeps advancing. An exhausted Anthropic credit balance kills cloud drafting only, returning a 400 on <code>/api/ops/draft</code> while the cron keeps ticking and reporting success. Monitor both by attempting a real draft, never by checking that a key exists.</li>
+<li><b>A bad Pages deploy takes the API down silently.</b> Every <code>/api/*</code> path returns HTTP 200 with the SPA shell and a POST answers 405 from the static handler. Nothing alarms. The monitor must assert on response <em>shape</em>, not status. Recovery: every deployment alias binds the same D1, so the previous deployment is a working API.</li>
+<li><b>Deliverable chasing.</b> A separate daily job nudges people who agreed but have not drafted, and people who drafted but have not posted. Different from the outreach ladder and it must not reuse it.</li>
+</ul>
+
+<h2 id="econ">18. Economics</h2>
+
+<table>
+<tr><th>Line</th><th>Estimate</th></tr>
+<tr><td>Addressable after qualification</td><td>~2,500 contacted, 15&ndash;25% Tier A, so 375&ndash;625 eligible for cash</td></tr>
+<tr><td>Reply rate, cold, with a real relationship in bucket 3</td><td>8&ndash;15%. Bucket 2 lower, 3&ndash;6%</td></tr>
+<tr><td>Reply to agreed</td><td>15&ndash;25% after the ladder and the caps</td></tr>
+<tr><td>Posts in quarter one</td><td>40&ndash;90</td></tr>
+<tr><td>Average settled fee</td><td>$120&ndash;190, given the $150 accept-outright floor and the $250 ceiling</td></tr>
+<tr><td>Cash out, quarter one</td><td><b>$6,000&ndash;$16,000</b></td></tr>
+<tr><td>Enrichment and sourcing</td><td>under $100/month</td></tr>
+<tr><td>Drafting</td><td>~$13/day at full tilt on Sonnet</td></tr>
+<tr><td>Sending</td><td>10 inboxes across 2 domains</td></tr>
+</table>
+
+<p><span class="k">Volume math.</span> 2,500 contacts times 4 touches is 10,000 sends. At 25 per inbox per day, 4 inboxes is 100 days. Ten inboxes across two domains gives 250 a day and roughly 40 days, which is the right shape for a quarter. Bucket 3 goes first and alone for the first two weeks, because it is the smallest list, the warmest, and the one where a mistake costs an existing relationship.</p>
+
+<h2 id="risk">19. Risks and open items</h2>
+
+<table>
+<tr><th>Risk</th><th>Mitigation</th></tr>
+<tr><td>The quote-relative ladder lets the counterparty set our budget</td><td><code>PROGRAM_CEILING</code> and <code>reach_cap</code>, both independent of Q</td></tr>
+<tr><td>Partners compare notes and find different rates</td><td>Budget framing, never worth framing. The number is explained by the campaign's budget, not by their value</td></tr>
+<tr><td>Klaviyo partners feel targeted</td><td>The conflict is named in the opener, section 13</td></tr>
+<tr><td>Undisclosed paid posts</td><td>Disclosure gates the payout, enforced in code and tested</td></tr>
+<tr><td>Deliverability across 2,500 cold contacts</td><td>New domains, no tracking on the opener, no links until follow-up 2, plain text, 25 per inbox per day</td></tr>
+<tr><td>Agreed but never posted</td><td>Separate chase job; nothing is paid before the post is live</td></tr>
+<tr><td>Unmeasurable spend</td><td>UTM or tagged mention mandatory; engagement recorded at 48h and 7d</td></tr>
+<tr><td>Fork divergence from the creator engine</td><td>Port once, deliberately, at the start. After that they are separate products and that is intended</td></tr>
+</table>
+
+<h3>Open items</h3>
+<ul>
+<li>Sending domains to register and warm. Two, ten inboxes.</li>
+<li>New Instantly workspace, and whether it sits under a Brevo-owned account rather than the current owner's.</li>
+<li>Tax and KYC at volume: W-9 for US recipients, W-8BEN otherwise. Confirm what Tolt handles and what it does not.</li>
+<li>The three brief topics for quarter one.</li>
+<li>Whether the 164 PushOwl partners already earning commissions get cash or programme benefits. Paying someone who already earns from us sets a precedent that cannot be walked back.</li>
+</ul>
+
+<h2 id="phases">20. Build phases</h2>
+
+<table>
+<tr><th>Phase</th><th>Work</th><th>Verified by</th></tr>
+<tr><td>0</td><td>Fork <code>outreach-engine</code>, provision D1, Pages, Worker. Run <code>apply-config</code> and <code>preflight</code></td><td><code>preflight.mjs</code> passes on a fully rebranded fork</td></tr>
+<tr><td>1</td><td>Forward-port the eleven items in section 3, including <code>migrate_v19</code></td><td>Existing rule tests pass; the queue index appears in the query plan as <code>SEARCH q USING COVERING INDEX</code></td></tr>
+<tr><td>2</td><td>Delete: pricing, gmail, market, cream, runner, Instagram and X routes and pages. Delete the proof-of-work gate</td><td>Line count down, tests still green, no dead route</td></tr>
+<tr><td>3</td><td>Schema: new columns, <code>deliverables</code>, retargeted ceiling triggers</td><td><code>schema.js</code> matches live; trigger rejects a 251</td></tr>
+<tr><td>4</td><td><code>seeding.js</code> and the sixteen guards in section 16</td><td>All sixteen tests written first, then made to pass</td></tr>
+<tr><td>5</td><td><code>staleness.js</code> plus the treg enrichment path. Run read-only over bucket 3</td><td>The real Tier A count for 760 PushOwl partners, under $10</td></tr>
+<tr><td>6</td><td>Import all three buckets, dedupe, suppression, the 13 overlap agencies flagged hand-run</td><td>Row counts reconcile against the source sheets</td></tr>
+<tr><td>7</td><td>Sequences, drafting prompts, tone register. Nothing sends</td><td>Twenty drafts reviewed by hand across all three buckets</td></tr>
+<tr><td>8</td><td>Dashboard: trim, retarget, add Posts</td><td>The board is usable for a day of real review</td></tr>
+<tr><td>9</td><td>Domains warmed, new Instantly workspace, campaign verified <code>status=1</code> with one real send to a controlled address</td><td>An actual email arrives, rendered, from the new domain</td></tr>
+<tr><td>10</td><td>Bucket 3 only, 25 a day, two weeks. Then widen</td><td>Reply rate, quote distribution and the first settled fee</td></tr>
+</table>
+
+<div class="box">
+<p><span class="k">Sending stays off until phase 10, and every message needs human approval throughout.</span> The agent operating this system may not approve, may not enable sending, and may not commit to a fee.</p>
+</div>
+
+<hr>
+<p class="n">Built on <code>farooqchisty-hub/outreach-engine</code>. Source data: PushOwl partner export (838 rows, 1 Sep 2026) and the Klaviyo partner directory workbook (637 agencies, pulled 2 Jul 2026). Individual names, emails and the 13-agency overlap list are deliberately not reproduced here; they live in the private repo.</p>
+
+</div>
