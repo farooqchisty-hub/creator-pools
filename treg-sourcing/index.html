@@ -1,0 +1,254 @@
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>treg for creator sourcing: measured bake-off</title>
+<style>
+:root{--ink:#111418;--mut:#5b6572;--line:#e3e7ec;--bg:#fff;--soft:#f6f8fa;--acc:#0b996e;--warn:#b45309;--err:#b91c1c;--code:#f2f4f7}
+@media(prefers-color-scheme:dark){:root{--ink:#e7ebf0;--mut:#98a2b3;--line:#232a33;--bg:#0e1116;--soft:#151a21;--acc:#34d399;--warn:#f59e0b;--err:#f87171;--code:#161b22}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:56px 22px 120px}
+h1{font-size:2.1rem;line-height:1.16;letter-spacing:-.022em;margin:0 0 .3em}
+h2{font-size:1.32rem;letter-spacing:-.014em;margin:3.2em 0 .7em;padding-top:1.1em;border-top:1px solid var(--line)}
+h3{font-size:1.02rem;letter-spacing:-.006em;margin:2em 0 .5em}
+p,li{color:var(--ink)}
+.lede{font-size:1.08rem;color:var(--mut);margin:0 0 .4em}
+.meta{color:var(--mut);font-size:.85rem;margin:0 0 2.4em}
+table{width:100%;border-collapse:collapse;margin:1.1em 0;font-size:.9rem;display:block;overflow-x:auto}
+th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+code{font:.87em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .34em;border-radius:4px}
+pre{background:var(--code);padding:14px 16px;border-radius:9px;overflow-x:auto;font-size:.83rem;line-height:1.55;border:1px solid var(--line)}
+pre code{background:none;padding:0}
+.box{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--acc);padding:14px 18px;border-radius:0 8px 8px 0;margin:1.3em 0}
+.box.w{border-left-color:var(--warn)} .box.e{border-left-color:var(--err)}
+.box p:first-child{margin-top:0}.box p:last-child{margin-bottom:0}
+.k{font-weight:600}
+ul,ol{padding-left:1.3em}li{margin:.28em 0}
+.toc{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:16px 22px;margin:2em 0 0;font-size:.9rem}
+.toc ol{margin:.3em 0 0;padding-left:1.2em}
+.toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+.win{color:var(--acc);font-weight:600}.bad{color:var(--err);font-weight:600}.mid{color:var(--warn);font-weight:600}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:1.4em 0}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card .v{font-size:1.5rem;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.card .l{font-size:.78rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:.2em}
+</style>
+<div class="wrap">
+
+<h1>treg for creator sourcing</h1>
+<p class="lede">A measured bake-off against the Apify follow-graph and ScrapeCreators, run live against the Brevo Creator Engine's own ICP and its own 4,018 known handles.</p>
+<p class="meta">16 September 2026 · every number below came from a real paid call · total cost of the bake-off $4.37 from the pushowl treg balance</p>
+
+<div class="toc">
+<span class="k">Contents</span>
+<ol>
+<li><a href="#verdict">The verdict in one table</a></li>
+<li><a href="#catalog">What treg actually exposes</a></li>
+<li><a href="#discovery">Discovery, measured</a></li>
+<li><a href="#enrich">Enrichment, measured</a></li>
+<li><a href="#head">treg vs ScrapeCreators, field by field</a></li>
+<li><a href="#wounds">The five open engine wounds this closes</a></li>
+<li><a href="#stack">The stack to build</a></li>
+<li><a href="#risks">What treg does not fix</a></li>
+</ol>
+</div>
+
+<h2 id="verdict">1. The verdict in one table</h2>
+
+<div class="cards">
+<div class="card"><div class="v">$0.0063</div><div class="l">per new in-band handle (treg)</div></div>
+<div class="card"><div class="v">65%</div><div class="l">yield of non-role emails</div></div>
+<div class="card"><div class="v">$0.002</div><div class="l">per creator enriched vs ScrapeCreators</div></div>
+<div class="card"><div class="v">5.4%</div><div class="l">of the engine's 12,380 creators are qualified today</div></div>
+</div>
+
+<table>
+<tr><th>Job</th><th>Today</th><th>treg</th><th>Call</th></tr>
+<tr><td>Find new handles</td><td>Apify follow-graph, $0.02 per seed</td><td><code>exa.creators.search</code> $0.0019 per new handle, <code>influencersclub.creators.search</code> $0.0063</td><td class="win">Switch</td></tr>
+<tr><td>Enforce follower band, engagement, language</td><td>Nothing at source. Discovered after paying to score</td><td>Filter parameters on the search call, free</td><td class="win">Switch</td></tr>
+<tr><td>Profile and posts for evidence</td><td>ScrapeCreators, 7 credits per creator, one key, no failover</td><td><code>treg.instagram.user.profile</code> + <code>.posts</code>, $0.002 total, 11 providers, auto failover</td><td class="win">Switch</td></tr>
+<tr><td>Find an email</td><td>Apify contact scraper $0.0052 per handle, 40% carry an email</td><td><code>enrich.profile</code> $0.1196, 85% carry an email, misses free</td><td class="mid">Keep Apify, borrow the classifier</td></tr>
+<tr><td>Tell a role mailbox from a person</td><td>Nothing. This is incident 1082 and it has jammed Gmail since 7 Sep</td><td><code>email_type</code> returned at source</td><td class="win">Switch</td></tr>
+<tr><td>Expand from a creator who worked</td><td>Apify follow-graph off passed seeds</td><td><code>creators.similar</code> lookalike</td><td class="bad">Do not buy. See section 3</td></tr>
+</table>
+
+<div class="box">
+<p><span class="k">The short version.</span> treg is 4.5x more expensive per emailable head than Apify and it is still the right move, because the engine's problem has never been volume. It has 12,380 creators and 670 qualified. On the 8 September calendar, ranks 11 to 40 of the bulk cohort returned <span class="k">0 of 30</span> in ICP. treg's rows arrive with the quantitative half of the ICP already true, which is the half the engine currently pays ScrapeCreators to discover after the fact.</p>
+</div>
+
+<h2 id="catalog">2. What treg actually exposes</h2>
+
+<p>The <code>creators</code> platform carries 11 capabilities across 13 endpoints, plus the routed <code>instagram.*</code> capabilities that sit outside it and matter just as much.</p>
+
+<table>
+<tr><th>Endpoint</th><th>Price</th><th>What it returns</th></tr>
+<tr><td><code>exa.creators.search</code></td><td class="num">$0.007 per call, 10 results, then $0.001 each</td><td>Profile and post URLs matching a plain-language description. Semantic only, no numeric filters</td></tr>
+<tr><td><code>influencersclub.creators.search</code></td><td class="num">$0.00598 per result</td><td>Handle, name, followers, engagement percent. Filters on follower range, engagement, country, language, bio keyword, hashtag, brand mentions, past brand deals, audience age and gender</td></tr>
+<tr><td><code>influencersclub.creators.similar</code></td><td class="num">$0.00598 per result</td><td>Lookalikes with a similarity score. <span class="bad">Measured unusable, see below</span></td></tr>
+<tr><td><code>influencersclub.creators.enrich.raw</code></td><td class="num">$0.0179 per success</td><td>Bio, follower and following counts, links in bio, and <span class="k">12 recent posts with full captions, hashtags and engagement</span>, in one call. Miss is free</td></tr>
+<tr><td><code>influencersclub.creators.enrich.profile</code></td><td class="num">$0.1196 per success</td><td>Everything above minus posts, plus <span class="k">validated email, email_type, first_name</span>, language code, niche class, average likes and comments, most recent post date. With <code>email_required: must_have</code> a creator with no email costs nothing</td></tr>
+<tr><td><code>influencersclub.creators.enrich.full</code></td><td class="num">$0.598 per success</td><td>Profile plus audience demographics and analytics</td></tr>
+<tr><td><code>influencersclub.creators.enrich.email</code></td><td class="num">$0.0299 per success</td><td>Reverse lookup, email to handle. Miss is free</td></tr>
+<tr><td><code>influencersclub.creators.posts</code> / <code>.post.details</code></td><td class="num">$0.0179</td><td>A creator's recent posts, or one post with comments and transcript</td></tr>
+<tr><td><code>influencersclub.creators.enrich.analytics</code></td><td class="num">$0.478</td><td>Performance analytics and audience breakdown</td></tr>
+<tr><td><code>influencersclub.creators.audience.overlap</code></td><td class="num">$0.598</td><td>Audience overlap between two creators</td></tr>
+<tr><td><code>scrapecreators.creators.socials.connected</code></td><td class="num">$0.0188</td><td>One handle to that person's other social profiles. Relevant to the LinkedIn and X personal channels</td></tr>
+<tr><td><code>treg.instagram.user.profile</code></td><td class="num">$0.001 per call</td><td>Routed across 11 providers, own keys first then cheapest. 93.3% success over 171,760 observed samples. ScrapeCreators is provider 7 in the waterfall</td></tr>
+<tr><td><code>treg.instagram.user.posts</code></td><td class="num">$0.001 per call</td><td>Routed across 3 providers</td></tr>
+</table>
+
+<h2 id="discovery">3. Discovery, measured</h2>
+
+<p>All three routes were run against the engine's live ICP and deduped against the 4,018 handles already in the database.</p>
+
+<h3>3a. exa, semantic</h3>
+<p>Five queries, 25 results each, $0.110 total. 125 results collapsed to 65 unique handles, of which 8 were already in the engine and 57 were new. That is <span class="k">$0.0019 per new handle</span>, the cheapest discovery of anything tested.</p>
+<p>The 8 duplicates are the signal worth reading: <code>itskatiefarrell</code>, <code>theecommerceassistant</code>, <code>growthbysabir</code>, <code>allaboutemailmarketing_</code> and four others were all creators the engine had independently found and validated. exa re-derived them from a sentence.</p>
+<div class="box w">
+<p><span class="k">Query shape decides everything.</span> Queries written as "creators who teach Shopify store owners about X" returned educators. The one query written as "creators who run a small online store and post behind the scenes" returned 21 straight brand and boutique accounts (<code>pangooapparel</code>, <code>shop.olivelynn</code>, <code>atianasboutique</code>), which the qualifier rejects as company voice. Two of the 57 were URL parsing artifacts, <code>success</code> and <code>inspiration</code>.</p>
+</div>
+
+<h3>3b. influencers.club, structured</h3>
+<p>Six keyword sets, each with <code>number_of_followers {800, 20000}</code>, <code>engagement_percent {min 1.5}</code>, <code>profile_language ["en"]</code>. 113 results for 1.13 credits, which is $0.676, yielding 107 new handles. That is <span class="k">$0.0063 per new handle</span>, and unlike exa every one of them is already inside the follower band, above the engagement floor and in an in-scope language.</p>
+
+<table>
+<tr><th>Bio keyword</th><th>Matching pool</th><th>Read</th></tr>
+<tr><td><code>klaviyo</code></td><td class="num">13</td><td>Tightest and cleanest. Every row was an email or ecommerce specialist</td></tr>
+<tr><td><code>dtc</code></td><td class="num">123</td><td>Good</td></tr>
+<tr><td><code>retention</code></td><td class="num">281</td><td>Good</td></tr>
+<tr><td><code>shopify</code></td><td class="num">289</td><td>Mixed. Real operators alongside build agencies and bio false positives</td></tr>
+<tr><td><code>ecommerce</code></td><td class="num">375</td><td>Mixed</td></tr>
+<tr><td><code>email</code> + <code>marketing</code></td><td class="num">118,047</td><td>Far too loose to use as a gate</td></tr>
+</table>
+<p>Median of the 107: 9,101 followers, 2.16% engagement. The engine's own measured ICP pattern is a median of 2,336 followers at 2.6% engagement, so the band should be tightened to roughly 800 to 8,000 on the next run.</p>
+<p>The tight keywords return small pools. 13 creators for <code>klaviyo</code> means structured search alone cannot feed a 40 a day cold lane. It has to be paired with exa for recall.</p>
+
+<h3>3c. Lookalike, do not buy it</h3>
+<div class="box e">
+<p><span class="k">This reproduces the exact failure the Apify follow-graph already has.</span> Five seeds drawn from creators the qualifier passed, 20 lookalikes each, $0.598.</p>
+<p>Without an engagement filter the 54 new rows ran 0.00% to 1.38% engagement and were dominated by agencies and app companies: Debutify, Kangaroo Rewards, Shopanova, Xuperb Digital Marketing, AppLabx, Developerz Hub, Prime Ecommerce Solutions. The engine's own sourcing comments already record that seeding by agency fills the graph with more agencies.</p>
+<p>Adding <code>engagement_percent {min 2}</code> to fix that collapsed the pool from 50,360 to 3,045 and destroyed topical relevance entirely. The 20 rows returned for the <code>theecommerceassistant</code> seed were a DJ, a graphic designer, an artist and assorted personal accounts with no ecommerce connection. Similarity and engagement cannot both be satisfied on this route.</p>
+</div>
+
+<h2 id="enrich">4. Enrichment, measured</h2>
+
+<p>Twenty handles taken straight off the structured search, no hand-picking, run through <code>enrich.profile</code> with <code>email_required: must_have</code>. Cost 3.40 credits, which is $2.033.</p>
+
+<div class="cards">
+<div class="card"><div class="v">85%</div><div class="l">returned any email (17 of 20)</div></div>
+<div class="card"><div class="v">65%</div><div class="l">returned a non-role email (13 of 20)</div></div>
+<div class="card"><div class="v">$0.156</div><div class="l">per usable non-role email</div></div>
+<div class="card"><div class="v">3 free</div><div class="l">misses cost nothing</div></div>
+</div>
+
+<table>
+<tr><th>email_type</th><th>Count</th><th>Examples</th></tr>
+<tr><td><code>business_email</code></td><td class="num">3</td><td>anibal@ecommercehub.miami, terrence@terrencemurtagh.com, me@connellmccarthy.com</td></tr>
+<tr><td><code>personal_email</code></td><td class="num">10</td><td>candicecynthia94@gmail.com, keondre.taylor@yahoo.com, victorlace84@gmail.com</td></tr>
+<tr><td><code>role_based_email</code></td><td class="num">4</td><td>hello@collabagency.com, admin@fdry.com, contact@numbered.com, info@hadibizri.com</td></tr>
+<tr><td>none found</td><td class="num">3</td><td>Charged nothing</td></tr>
+</table>
+
+<p>The comparison against the Apify contact scraper, whose numbers are recorded in <code>runner/apify_source.py</code> from a measured run on 27 August:</p>
+
+<table>
+<tr><th>&nbsp;</th><th>Apify contact scraper</th><th>influencers.club enrich.profile</th></tr>
+<tr><td>Price per handle attempted</td><td class="num">$0.0052</td><td class="num">$0.1196, free on a miss</td></tr>
+<tr><td>Email yield</td><td class="num">40%</td><td class="num">85%</td></tr>
+<tr><td>Cost per email found</td><td class="num">$0.013</td><td class="num">$0.141</td></tr>
+<tr><td>Cost per non-role email</td><td class="num">not measurable, it does not classify</td><td class="num">$0.156</td></tr>
+<tr><td>Role mailbox flagged</td><td class="bad">No</td><td class="win">Yes, at source</td></tr>
+<tr><td>First name for the greeting gate</td><td class="bad">No</td><td class="win">Yes</td></tr>
+<tr><td>Engagement, language, last post date</td><td class="bad">No</td><td class="win">Yes</td></tr>
+</table>
+
+<p>Apify is ten times cheaper for the raw email step and that gap is too big to ignore at 40 leads a day. The recommendation in section 7 keeps Apify for bulk extraction and borrows only the classifier logic.</p>
+
+<h3>Reverse lookup works, with a limit</h3>
+<p><code>enrich.email</code> resolved <code>terrence@terrencemurtagh.com</code> and <code>anibal@ecommercehub.miami</code> to their Instagram handles with follower counts, at $0.0299 each. It returned <code>creator_not_found</code> and charged nothing for a plain gmail address. Domain emails resolve, consumer addresses largely do not.</p>
+
+<h2 id="head">5. treg vs ScrapeCreators, field by field</h2>
+
+<p>Seven handles the engine already holds, pulled from both providers back to back.</p>
+
+<table>
+<tr><th>Field</th><th>Agreement</th></tr>
+<tr><td>follower_count</td><td class="win">6 of 7 identical. <code>vvaishnavi04</code> differed by one, which is live drift between two calls seconds apart, not an error</td></tr>
+<tr><td>biography</td><td class="win">7 of 7 identical</td></tr>
+<tr><td>is_verified</td><td class="win">7 of 7 identical</td></tr>
+<tr><td>external_url</td><td class="bad">0 of 7. The routed endpoint served from tikhub on every call and tikhub does not return it. ScrapeCreators returned it every time</td></tr>
+<tr><td>Latency p50</td><td>Comparable, roughly 5.3s both</td></tr>
+<tr><td>Price</td><td class="win">$0.001 vs $0.00188</td></tr>
+</table>
+
+<div class="box w">
+<p><span class="k">The external_url gap is load bearing.</span> The engine reads <code>external_url</code> and <code>bio_links</code> to crawl the link in bio, which is where a large share of creator emails actually live. Two ways round it: send <code>X-Treg-Route-Prefer: scrapecreators</code> on the profile call and pay $0.00188 instead of $0.001, or use <code>influencersclub.creators.enrich.raw</code> at $0.0179, which returns <code>links_in_bio</code> plus 12 captioned posts in a single call and replaces both the profile and the posts fetch.</p>
+</div>
+
+<h2 id="wounds">6. The five open engine wounds this closes</h2>
+
+<ol>
+<li><span class="k">The role mailbox jam.</span> Incidents 1082 and 1146. Eight approved Gmail drafts, every one a <code>support@</code>, <code>press@</code>, <code>media@</code> or <code>clientsupport@</code> address, with no reject route to retire them, so the Gmail lane reports work it must not do. <code>email_type</code> classifies these at source. Four of my seventeen emails were <code>role_based_email</code> and would never have entered the queue. <code>src/emailquality.js</code> <code>SYSTEM_ROLE</code> currently matches none of those prefixes, and extending that regex is free whether or not treg ships.</li>
+<li><span class="k">The greeting gate.</span> Most Gmail recontact leads carry <code>name: null</code>, so the standing rule is to default to "Hello". <code>enrich.profile</code> returns <code>first_name</code> as a separate field.</li>
+<li><span class="k">The proof of work gate blocking follow-ups.</span> Incidents 1083 and 1308, eighteen due follow-ups refused because the lead holds no real post. The documented fix is <code>POST /api/discover/enrich</code> at seven ScrapeCreators credits per creator. <code>enrich.raw</code> puts twelve captioned posts on file for $0.0179 in one call.</li>
+<li><span class="k">Single provider dependency.</span> The key configured in this machine's <code>scrape-creators</code> MCP server is <span class="bad">at zero credits right now</span>. The engine's own key at <code>~/.scrapecreators_key</code> has 11,780 left, so nothing is broken, but the engine has one key and no failover. <code>treg.instagram.user.profile</code> waterfalls eleven providers.</li>
+<li><span class="k">Both cold channels dry.</span> Since 8 September the Instagram calendar crosses out of the good pool at rank 11 and Gmail has the same eight role mailboxes. Section 7 refills the pool with rows that are in band before they are ever scored.</li>
+</ol>
+
+<h2 id="stack">7. The stack to build</h2>
+
+<p>A <code>runner/treg_source.py</code> beside the existing <code>apify_source.py</code>, four stages, cheapest gate first.</p>
+
+<pre><code>Stage 1  RECALL          exa.creators.search
+         educator-shaped queries only, never store-owner-shaped
+         ~$0.002 per handle
+
+Stage 2  QUANTITATIVE    influencersclub.creators.search per ICP keyword
+         number_of_followers {800, 8000}   engagement_percent {min 2}
+         profile_language en/fr/de/es/it/nl/sv/pt   last_post recent
+         ~$0.006 per handle, band and language guaranteed
+
+Stage 3  QUALITATIVE     influencersclub.creators.enrich.raw
+         bio + links_in_bio + 12 captioned posts, one call, $0.0179
+         run the existing ICP_STRONG / STORYTELLER / ANTI regexes here
+         plus the company_voice check, BEFORE paying for an email
+
+Stage 4  CONTACT         apify seemuapps~instagram-contact-scraper, $0.0052
+         then drop role_based prefixes with the extended SYSTEM_ROLE regex
+         escalate to influencersclub enrich.profile ($0.1196, miss free)
+         only for leads worth a validated business email and a first name
+</code></pre>
+
+<p>Daily cost at 40 qualified emailable leads, inside the $5.00 daily cap set on 28 August:</p>
+
+<table>
+<tr><th>Stage</th><th>Volume</th><th>Unit</th><th>Cost</th></tr>
+<tr><td>1 and 2, discovery</td><td class="num">200 handles</td><td class="num">$0.008</td><td class="num">$1.60</td></tr>
+<tr><td>3, evidence and ICP gate</td><td class="num">100 handles</td><td class="num">$0.0179</td><td class="num">$1.79</td></tr>
+<tr><td>4, email</td><td class="num">100 handles</td><td class="num">$0.0052</td><td class="num">$0.52</td></tr>
+<tr><td>4b, validated email on the best 5</td><td class="num">5</td><td class="num">$0.1196</td><td class="num">$0.60</td></tr>
+<tr><td><span class="k">Total</span></td><td></td><td></td><td class="num"><span class="k">$4.51 per day</span></td></tr>
+</table>
+
+<p>Going all treg on stage 4 instead, at 85% email yield, costs roughly $13 a day and breaches the cap. That is the single reason Apify stays in the stack.</p>
+
+<p>Two things to retire: the Apify follow-graph seeding, which produced the bulk cohort of creator ids 6771 to 11750 where 0 of 30 read as in ICP, and the idea that treg's lookalike route is its replacement.</p>
+
+<h2 id="risks">8. What treg does not fix</h2>
+
+<div class="box e">
+<p><span class="k">Bio keyword matching still admits agencies.</span> Reading all twenty enriched rows by hand, roughly six to eight are genuine creator educators. The rest are build agencies (FDRY, Numbered, Robusht), service sellers, a Shopify employee, an artist and a Waterloo engineering student whose bio happens to tag <code>@shopify</code>. treg lifts ICP precision from near zero on the bulk cohort to roughly a third. It does not make it clean. Stage 3 is not optional.</p>
+</div>
+
+<ul>
+<li><span class="k">Klaviyo's own brand account came back as a result</span> from an exa query. Vendor and competitor exclusion lists still need a human pass every sweep, the same rule the citation engine runs under.</li>
+<li><span class="k">Discovery pools are small at high precision.</span> Thirteen creators matched <code>klaviyo</code> in the band. Precision and volume trade off directly here.</li>
+<li><span class="k">The MCP <code>call</code> tool drops the body for <code>exa.creators.search</code></span> and returns a 400 saying <code>query</code> is undefined. The <code>treg</code> CLI with the identical payload works. Use the CLI for exa until that is fixed.</li>
+<li><span class="k">The discovery route returned a transient 429</span> on the first attempt, with the text "Discovery API credit limit reached". It served normally minutes later with 8,781 credits showing. Any production runner needs a retry on that specific message rather than treating it as exhaustion.</li>
+<li><span class="k">Engagement percent is computed by influencers.club, not measured by the engine.</span> The engine prices on median views and its own measured reach. Their number is a pre-filter, not a substitute for the evidence pass.</li>
+</ul>
+
+<h2>Appendix: how the bake-off was paid for</h2>
+<p>treg balance moved from $66.483 to $62.114, so $4.369 total: $0.110 exa, $0.676 structured search, $0.598 lookalike, $2.033 email yield test, $0.233 raw enrich, $0.719 head to head, reverse lookups and probes. Every endpoint was called with treg's injected keys, no key was held locally.</p>
+
+</div>
