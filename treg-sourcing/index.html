@@ -37,7 +37,7 @@ ul,ol{padding-left:1.3em}li{margin:.28em 0}
 
 <h1>treg for creator sourcing</h1>
 <p class="lede">A measured bake-off against the Apify follow-graph and ScrapeCreators, run live against the Brevo Creator Engine's own ICP and its own 4,018 known handles.</p>
-<p class="meta">16 September 2026 · every number below came from a real paid call · total cost of the bake-off $4.37 from the pushowl treg balance</p>
+<p class="meta">16 September 2026 · every number below came from a real paid call · total cost of the bake-off $8.43 from the pushowl treg balance · section 9 costs 500 accounts for the signups motion</p>
 
 <div class="toc">
 <span class="k">Contents</span>
@@ -50,6 +50,7 @@ ul,ol{padding-left:1.3em}li{margin:.28em 0}
 <li><a href="#wounds">The five open engine wounds this closes</a></li>
 <li><a href="#stack">The stack to build</a></li>
 <li><a href="#risks">What treg does not fix</a></li>
+<li><a href="#signups500">Costing 500 accounts for the signups motion</a></li>
 </ol>
 </div>
 
@@ -246,6 +247,75 @@ Stage 4  CONTACT         apify seemuapps~instagram-contact-scraper, $0.0052
 <li><span class="k">The MCP <code>call</code> tool drops the body for <code>exa.creators.search</code></span> and returns a 400 saying <code>query</code> is undefined. The <code>treg</code> CLI with the identical payload works. Use the CLI for exa until that is fixed.</li>
 <li><span class="k">The discovery route returned a transient 429</span> on the first attempt, with the text "Discovery API credit limit reached". It served normally minutes later with 8,781 credits showing. Any production runner needs a retry on that specific message rather than treating it as exhaustion.</li>
 <li><span class="k">Engagement percent is computed by influencers.club, not measured by the engine.</span> The engine prices on median views and its own measured reach. Their number is a pre-filter, not a substitute for the evidence pass.</li>
+</ul>
+
+
+<h2 id="signups500">9. Costing 500 accounts for the signups motion</h2>
+
+<p>Asked 16 September: 500 ICP accounts for the signups motion, at least 60% carrying an email address. The signups motion in <code>src/motion.js</code> is YouTube, LinkedIn and X with real credibility plus Instagram above 20,000 followers, and <code>SIGNUPS_REACH_FLOOR</code> is 10,000 measured reach. Everything below was measured live, not modelled.</p>
+
+<h3>9a. You are already 73% of the way there</h3>
+<div class="cards">
+<div class="card"><div class="v">364</div><div class="l">signups-eligible and untouched, reach already proven</div></div>
+<div class="card"><div class="v">221</div><div class="l">of those already carry an email (61%)</div></div>
+<div class="card"><div class="v">240</div><div class="l">of those already score at or above the 38 band</div></div>
+<div class="card"><div class="v">260</div><div class="l">genuinely new accounts still needed</div></div>
+</div>
+<p>Split of the 364: Instagram above 20k with reach over 10k, 280. X with reach over 10k, 78. YouTube, 6. A further 1,290 rows sit on signups platforms with reach never measured, but only 350 of them have 5,000 followers or more, and a random sample of the X ones was 26, 117, 126, 232 and 482 follower accounts with empty bios out of the <code>xlsx-x-full-2026-09-03</code> sheet import. Treat that pile as salvage, not inventory.</p>
+
+<h3>9b. Email yield by platform, measured today</h3>
+<table>
+<tr><th>Platform</th><th>n</th><th>Any email</th><th>Non-role email</th><th>Cost per usable email</th></tr>
+<tr><td>X / Twitter</td><td class="num">10</td><td class="num">90%</td><td class="num win">90%</td><td class="num">$0.133</td></tr>
+<tr><td>Instagram above 20k</td><td class="num">10</td><td class="num">90%</td><td class="num win">80%</td><td class="num">$0.150</td></tr>
+<tr><td>Instagram 800 to 20k (views motion, for contrast)</td><td class="num">20</td><td class="num">85%</td><td class="num">65%</td><td class="num">$0.156</td></tr>
+<tr><td>YouTube</td><td class="num">8</td><td class="num">62%</td><td class="num mid">62%</td><td class="num">$0.193</td></tr>
+<tr><td>LinkedIn</td><td class="num">12</td><td colspan="3" class="bad">ContactOut returns provider_capacity_unavailable on treg. No email route. LinkedIn stays DM only, which matches the invite then DM channel anyway</td></tr>
+</table>
+
+<div class="box e">
+<p><span class="k">YouTube discovery on influencers.club is broken and it fails silently.</span> <code>keywords_in_bio</code> is ignored on the youtube platform: both "ecommerce" and "shopify" returned a pool of 13,542,187 and the identical 15 channels, all 700k to 4.5M subscriber general entertainment accounts. YouTube candidates have to come from exa or the ScrapeCreators YouTube search instead.</p>
+</div>
+
+<h3>9c. Pool ceilings, which decide the platform mix</h3>
+<table>
+<tr><th>Platform</th><th>In-band pool on influencers.club</th></tr>
+<tr><td>Instagram above 20k, English, seven ecom bio keywords</td><td class="num">roughly 900 raw, 71 unique in a 10-per-keyword sample</td></tr>
+<tr><td>X, bio "ecommerce"</td><td class="num">118</td></tr>
+<tr><td>X, bio "shopify"</td><td class="num">62</td></tr>
+<tr><td>YouTube</td><td class="bad">unusable, see above</td></tr>
+</table>
+<p>X is thin at this ICP, so 500 cannot be built on it. The realistic mix is roughly two thirds Instagram above 20k, a fifth X, and the rest YouTube and LinkedIn out of exa. The X names that do come back are the right ones: Tracey Wallace, Davie Fogarty, Bill D'Alessandro, Rob Freund, Arati Sharma. Several Shopify employees also come back (Harley Finkelstein, Jean-Michel Lemieux, Russ Maschmeyer, Daniel Beauchamp), so the vendor exclusion pass is mandatory before anyone is contacted.</p>
+
+<h3>9d. The bill</h3>
+<p>Option 1 mines the database first and uses the Apify contact scraper for the Instagram email share, where it is ten times cheaper than treg and the only thing it loses is the <code>email_type</code> label, which the extended <code>SYSTEM_ROLE</code> regex covers.</p>
+<table>
+<tr><th>Step</th><th>Route</th><th>Volume</th><th>Unit</th><th>Cost</th></tr>
+<tr><td>Re-score the 124 eligible rows with no passing score</td><td><code>enrich.raw</code></td><td class="num">124</td><td class="num">$0.0179</td><td class="num">$2.22</td></tr>
+<tr><td>Prove reach on the 350 salvageable unmeasured rows</td><td><code>treg.*.user.posts</code></td><td class="num">350</td><td class="num">$0.001</td><td class="num">$0.35</td></tr>
+<tr><td>Captions and ICP score on the survivors</td><td><code>enrich.raw</code></td><td class="num">120</td><td class="num">$0.0179</td><td class="num">$2.15</td></tr>
+<tr><td>Discover the remaining gap</td><td>influencers.club + exa</td><td class="num">580</td><td class="num">$0.004</td><td class="num">$2.32</td></tr>
+<tr><td>Reach and captions on the newly discovered</td><td><code>enrich.raw</code></td><td class="num">580</td><td class="num">$0.0179</td><td class="num">$10.38</td></tr>
+<tr><td>Email, Instagram share</td><td>Apify contact scraper</td><td class="num">500</td><td class="num">$0.0052</td><td class="num">$2.60</td></tr>
+<tr><td>Email, X and YouTube share</td><td><code>enrich.profile</code> must_have</td><td class="num">150</td><td class="num">$0.1196</td><td class="num">$17.94</td></tr>
+<tr><td><span class="k">Total</span></td><td></td><td></td><td></td><td class="num"><span class="k">$37.96</span></td></tr>
+</table>
+<p>Delivers 500 confirmed accounts with roughly 330 to 380 emails, which is 66% to 76% and clears the 60% bar with margin.</p>
+
+<p>Option 2 drops Apify entirely and puts every email through <code>enrich.profile</code>, so every row arrives with <code>email_type</code>, <code>first_name</code>, engagement, language and last post date. The email step becomes 400 calls at $0.1196, which is $47.84 instead of $20.54, and the total lands near <span class="k">$65</span>. That is above the $62.11 currently on the treg balance, so it needs a top up.</p>
+
+<p>Option 3 hits exactly 60% and no more by skipping the email step on the last 190 accounts, which takes Option 1 down to roughly <span class="k">$29</span>.</p>
+
+<div class="box">
+<p><span class="k">Proportion.</span> The signups ladder opens at $500 and targets $600 to $1,000 with a $1,300 ceiling. The entire sourcing bill for 500 accounts is less than one closed signups deal. The binding constraint is not money, it is that the $5.00 daily Apify cap set on 28 August does not govern the treg balance, so somebody has to decide whether this is a single authorised spend or spread across a fortnight.</p>
+</div>
+
+<h3>9e. What will go wrong</h3>
+<ul>
+<li><span class="k">ICP survival is about 40% on the signups bands</span>, better than the third measured on the micro band but still not clean. Every cost line above already carries that discount; removing the captions and scoring stage to save $12 would put 300 off-ICP accounts into the pipeline.</li>
+<li><span class="k">Shopify staff read as perfect ICP to every filter tested.</span> Four came back in two small samples. The vendor and own-domain exclusion list needs a human pass, same rule the citation engine runs under.</li>
+<li><span class="k">The 1,290 unmeasured rows are mostly the sheet-import cohort</span> and will not salvage at the rate assumed if the sample was unlucky. If they salvage at zero, the gap grows by about 50 accounts and the bill by about $4.</li>
+<li><span class="k">LinkedIn contributes no emails at all right now.</span> Any LinkedIn share of the 500 counts against the 40% that may be email-free, not toward the 60%.</li>
 </ul>
 
 <h2>Appendix: how the bake-off was paid for</h2>
