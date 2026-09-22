@@ -1,0 +1,195 @@
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Partner Voices: negotiation and follow-up</title>
+<style>
+:root{--ink:#111418;--mut:#5b6572;--line:#e3e7ec;--bg:#fff;--soft:#f6f8fa;--acc:#0b996e;--warn:#b45309;--err:#b91c1c;--code:#f2f4f7}
+@media(prefers-color-scheme:dark){:root{--ink:#e7ebf0;--mut:#98a2b3;--line:#232a33;--bg:#0e1116;--soft:#151a21;--acc:#34d399;--warn:#f59e0b;--err:#f87171;--code:#161b22}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:56px 22px 120px}
+h1{font-size:2.1rem;line-height:1.16;letter-spacing:-.022em;margin:0 0 .3em}
+h2{font-size:1.32rem;letter-spacing:-.014em;margin:3.2em 0 .7em;padding-top:1.1em;border-top:1px solid var(--line)}
+h3{font-size:1.02rem;letter-spacing:-.006em;margin:2em 0 .5em}
+.lede{font-size:1.08rem;color:var(--mut);margin:0 0 .4em}
+.meta{color:var(--mut);font-size:.85rem;margin:0 0 2.4em}
+table{width:100%;border-collapse:collapse;margin:1.1em 0;font-size:.89rem;display:block;overflow-x:auto}
+th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+code{font:.87em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .34em;border-radius:4px}
+pre{background:var(--code);padding:14px 16px;border-radius:9px;overflow-x:auto;font-size:.83rem;line-height:1.55;border:1px solid var(--line)}
+pre code{background:none;padding:0}
+.box{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--acc);padding:14px 18px;border-radius:0 8px 8px 0;margin:1.3em 0}
+.box.w{border-left-color:var(--warn)} .box.e{border-left-color:var(--err)}
+.box p:first-child{margin-top:0}.box p:last-child{margin-bottom:0}
+.k{font-weight:600}
+ul,ol{padding-left:1.3em}li{margin:.28em 0}
+.toc{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:16px 22px;margin:2em 0 0;font-size:.9rem}
+.toc ol{margin:.3em 0;padding-left:1.4em;columns:2;column-gap:2.4em}
+.toc a{color:var(--ink);text-decoration:none}.toc a:hover{color:var(--acc)}
+.tag{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.14em .5em;border-radius:4px;background:var(--code);color:var(--mut)}
+.tag.ok{background:rgba(11,153,110,.13);color:var(--acc)}
+.tag.no{background:rgba(185,28,28,.12);color:var(--err)}
+.q{border-left:3px solid var(--line);padding-left:16px;margin:1.2em 0;color:var(--mut);font-style:italic}
+.num{font-variant-numeric:tabular-nums}
+.dec{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:1.4em 0}
+.dec h3{margin-top:0}
+</style>
+<div class="wrap">
+
+<h1>Negotiation and follow-up</h1>
+<p class="lede">Replacing the instant walkaway with a bounded persuasion ladder, paying Klaviyo partners a premium that can be explained, and fixing two follow-up sequences that have never actually run.</p>
+<p class="meta">Partner Voices &middot; 22 Sep 2026 &middot; framework only, nothing built &middot; for Farooq to approve</p>
+
+<div class="box e">
+<p><span class="k">Read this first.</span> Auditing the follow-up question turned up that <span class="k">no follow-up has ever been sent</span>. 247 openers have gone out and 146 follow-ups sit approved behind them, because dispatch orders cold work by the id it was queued under rather than by whether it is due. Every cadence decision below is theoretical until that is fixed, and it is the highest-value thing on this page.</p>
+</div>
+
+<div class="toc"><ol>
+<li><a href="#now">What is actually happening now</a></li>
+<li><a href="#ladder">The persuasion ladder</a></li>
+<li><a href="#klaviyo">The Klaviyo premium</a></li>
+<li><a href="#cold">Cold follow-ups</a></li>
+<li><a href="#ghost">Ghost follow-ups</a></li>
+<li><a href="#retain">Who we can still retain</a></li>
+<li><a href="#decide">What I need from you</a></li>
+</ol></div>
+
+<h2 id="now">1. What is actually happening now</h2>
+
+<table>
+<tr><th>Thing</th><th>Configured</th><th>Actually happening</th></tr>
+<tr><td>Cold follow-ups</td><td>days 3, 8, 15, 24</td><td><span class="k">never sent, 0 of 146</span></td></tr>
+<tr><td>Ghost follow-ups</td><td>days 2, 4, 7</td><td>never sent</td></tr>
+<tr><td>Walkaway</td><td>quote above 2x ceiling</td><td>fires, and fires hard</td></tr>
+<tr><td>Openers</td><td>100/day</td><td>247 sent, working</td></tr>
+</table>
+
+<p>Two mechanical faults sit behind that, both cheap to fix:</p>
+<ul>
+<li><span class="k">Dispatch is first-in-first-out across all cold work.</span> The 33 remaining openers hold ids 434 to 466 and the follow-ups hold 468 to 613, so every follow-up waits for every opener. That is the wrong order: an opener can wait a day at no cost, while a follow-up sent on day 8 instead of day 3 is a different message to a colder person.</li>
+<li><span class="k">Six creators sit at stage <code>delivery_failed</code> whose mail actually sent.</span> George Kapernaros is one, and he has agreed $850. The stage is stale from the outage rather than real, but anything reading stage treats them as broken.</li>
+</ul>
+
+<h2 id="ladder">2. The persuasion ladder</h2>
+
+<p>Today a quote above twice the ceiling gets one re-measure and then a decline. That is right when the gap is unbridgeable and wrong when it is a first conversation with somebody who has never heard our side. What is missing is not more haggling, it is <span class="k">new information</span>, offered in a fixed order a fixed number of times.</p>
+
+<h3>The three moves, each used once</h3>
+<p>The rule that makes this safe: <span class="k">a move may only be sent if it carries a lever not used before in this thread</span>. Repeating "would you reconsider" in three different sentences is what makes outreach feel like pressure, and it is exactly what a model will do unless it is forbidden.</p>
+
+<table>
+<tr><th>#</th><th>Lever</th><th>What it says</th><th>Money</th></tr>
+<tr><td>1</td><td><span class="k">Pilot framing</span></td><td>A first collaboration, deliberately small, so both sides can see whether it works. The budget is what it is because nothing has been proven yet.</td><td>no new figure</td></tr>
+<tr><td>2</td><td><span class="k">The repeat</span></td><td>We run this every quarter. Somebody who does one well is on the shortlist for the next, at a rate set by what the first one did.</td><td>no new figure</td></tr>
+<tr><td>3</td><td><span class="k">Best and final, plus non-cash</span></td><td>Our actual maximum, named once, alongside what we can add that is not money: paid amplification behind the post, a case study, partner directory placement.</td><td>the ceiling</td></tr>
+</table>
+
+<h3>When it stops, and it must stop</h3>
+<ul>
+<li><span class="k">They ask us to stop.</span> Any opt-out language, immediate and unconditional. Acknowledge, thank, close, suppress.</li>
+<li><span class="k">They repeat the same number twice.</span> A number restated is a position, not a negotiation. Close.</li>
+<li><span class="k">Three moves are spent.</span> Close.</li>
+<li><span class="k">Their floor is still above our ceiling after move 3.</span> Close.</li>
+<li><span class="k">The gap is beyond reach before we start.</span> If their number is more than 3x our ceiling, no lever closes it and three emails is three emails of nobody's time well spent. Decline at once, warmly. Daniel James asked $5,000 against $650. Nothing on this page would have won that.</li>
+</ul>
+
+<div class="box">
+<p><span class="k">The close is a real message, not a silence.</span> It thanks them, says plainly that the budget is what it is this quarter, and says we will come back when it moves. That last part has to be true: it means keeping them on the list rather than suppressing them, and actually returning.</p>
+</div>
+
+<h2 id="klaviyo">3. The Klaviyo premium</h2>
+
+<p>Your argument is sound and worth stating precisely, because it is what separates this from paying more to whoever pushes hardest: <span class="k">a Klaviyo partner recommending Brevo carries weight a neutral party cannot</span>. They are certified by the competitor. The endorsement costs them something, and that is exactly what makes it worth something.</p>
+
+<h3>The rule</h3>
+<pre><code>if bucket is klaviyo_partner or klaviyo_poster
+   and their floor &gt; our ceiling
+   and their floor &lt;= 2.5 x our ceiling        &lt;- the bound that stops it being theatre
+then
+   allowed = ceiling + (their_floor - ceiling) / 2      (meet halfway)
+   allowed = min(allowed, PROGRAM_CEILING 1000)</code></pre>
+
+<p>Worked against the three real cases:</p>
+<table>
+<tr><th>Person</th><th>Our ceiling</th><th>Their floor</th><th>Ratio</th><th>Halfway</th><th>Outcome</th></tr>
+<tr><td>George Kapernaros</td><td>$850</td><td>$1,000</td><td>1.2x</td><td>$925</td><td><span class="k">would have applied</span></td></tr>
+<tr><td>Ben Walter</td><td>$300</td><td>$1,450</td><td>4.8x</td><td>$875</td><td>too far, no uplift</td></tr>
+<tr><td>Daniel James</td><td>$650</td><td>$5,000</td><td>7.7x</td><td>$2,825</td><td>far too far</td></tr>
+</table>
+
+<p>The 2.5x bound is doing real work. Without it, Ben Walter gets an $875 offer he has already implied he will refuse, and Daniel James gets $1,000 against a $5,000 ask, which reads as not having listened. <span class="k">Both cost more relationship than a clean no would.</span></p>
+
+<div class="box w">
+<p><span class="k">Two guardrails I would insist on.</span></p>
+<p>First, <span class="k">never say why</span>. The moment "we pay Klaviyo partners more" appears in an email it becomes a claim anybody can make, and it is unanswerable when a PushOwl partner asks why they got less for the same post. The premium is an internal pricing decision, defended internally.</p>
+<p>Second, <span class="k">it is a ceiling, never an opening</span>. The halfway number is what we may reach, not what we lead with. Leading at halfway hands away the entire concession before they have moved at all.</p>
+</div>
+
+<h2 id="cold">4. Cold follow-ups</h2>
+
+<p>You asked for every two days, three times, pausing on reply. Currently configured at days 3, 8, 15 and 24, and as established, none of it has run.</p>
+
+<table>
+<tr><th></th><th>Day</th><th>Carries</th></tr>
+<tr><td>Opener</td><td>0</td><td>who we are, why them, that it is paid</td></tr>
+<tr><td>Follow-up 1</td><td>2</td><td>the detail held back: it is paid, the post is theirs</td></tr>
+<tr><td>Follow-up 2</td><td>4</td><td>it need not criticise anybody, beyond linking to Brevo</td></tr>
+<tr><td>Follow-up 3</td><td>6</td><td>one concrete topic, offered as an example</td></tr>
+<tr><td>Close</td><td>10</td><td>warm, short, door open</td></tr>
+</table>
+
+<p>Any inbound stops the ladder, including an out-of-office, because an auto-reply proves the address is live and a human will see the thread.</p>
+
+<div class="box w">
+<p><span class="k">My one hesitation, and it is yours to overrule.</span> Four emails in six days to somebody who has never answered is fast for B2B. Our two new domains have never carried real traffic, and complaint rate is what ends a sending domain, not bounce rate. I would run <span class="k">day 3, 6, 9</span>: the same three touches inside the same two-week window, roughly half the complaint risk. If you want two days, I will build two days and watch the first week closely.</p>
+</div>
+
+<h2 id="ghost">5. Ghost follow-ups, after they have replied</h2>
+
+<p>A different situation from cold silence, and it deserves a different ladder. Somebody who replied and went quiet is usually deciding, checking with a colleague, or busy. They are not uninterested, and they have already told us so once.</p>
+
+<table>
+<tr><th></th><th>Trigger</th><th>Tone</th></tr>
+<tr><td>Nudge 1</td><td>3 business days after our last message</td><td>short, adds one thing, asks nothing new</td></tr>
+<tr><td>Nudge 2</td><td>2 days after that</td><td>shorter, explicitly last, door open</td></tr>
+<tr><td>Park</td><td>after nudge 2</td><td>nothing sent, thread parked</td></tr>
+</table>
+
+<p><span class="k">Parked is not rejected</span>, and the distinction matters. A parked thread stays out of the cold ladder, keeps its measured ceiling, and is eligible for a deliberate re-approach next quarter. Marking them rejected throws away a warm contact to tidy a dashboard.</p>
+
+<p>Business days, not calendar days, for both. A Friday reply nudged on Sunday is a nudge nobody reads and a small annoyance on Monday.</p>
+
+<h2 id="retain">6. Who we can still retain</h2>
+
+<p>Twelve Klaviyo-affiliated people have replied, out of 150 contacted. Most are still live and simply have not quoted. Two were genuinely lost, and one of those is winnable.</p>
+
+<table>
+<tr><th>Person</th><th>Ceiling</th><th>What happened</th><th>Verdict</th></tr>
+<tr><td><span class="k">Ben Zettler</span></td><td>$725</td><td>Passed on the Klaviyo conflict. Money was never discussed at all.</td><td><span class="k">winnable, and not with money</span></td></tr>
+<tr><td>Ben Walter</td><td>$300</td><td>$1,950, then $1,450 as his floor</td><td>4.8x, let go</td></tr>
+<tr><td>Daniel James</td><td>$650</td><td>$5,000</td><td>7.7x, gone</td></tr>
+<tr><td>George Kapernaros</td><td>$850</td><td>agreed $850, delivering</td><td>won</td></tr>
+<tr><td>Corto, Richard, Melanie, Chase, Michael, Connor, Gianni, Orsi</td><td>$250 to $775</td><td>live, no quote yet</td><td>in flight</td></tr>
+</table>
+
+<p><span class="k">Ben Zettler is the one to go back to.</span> His objection was never the fee, it was that the post would sit badly against his Klaviyo partnership, and we answered by explaining the disclosure and then letting him go. Under the new brief the post links to Brevo, which makes his objection <em>more</em> valid rather than less, so a second approach has to be honest about that. The pilot framing is the right lever: one post, his words, and a clear statement that nobody is being asked to criticise anybody. If he still says no, that is a real no and worth having cleanly.</p>
+
+<h2 id="decide">7. What I need from you</h2>
+
+<div class="dec">
+<h3>Five decisions</h3>
+<ol>
+<li><span class="k">Persuasion ladder</span>: three moves, each a distinct lever, stopping on opt-out, a repeated number, or a gap over 3x. Yes?</li>
+<li><span class="k">Klaviyo halfway</span>, bounded at 2.5x, capped at $1,000, never explained to them, never used as an opening. Yes?</li>
+<li><span class="k">Cold cadence</span>: your day 2, 4, 6, or my day 3, 6, 9?</li>
+<li><span class="k">Ghost ladder</span>: 3 business days, then 2 days, then park. Yes?</li>
+<li><span class="k">Ben Zettler</span>: go back with the pilot framing, or leave him?</li>
+</ol>
+</div>
+
+<div class="box e">
+<p><span class="k">Independent of all five</span>, the dispatch ordering needs fixing whatever you decide. Follow-ups are time-sensitive and openers are not, so due work should go before new work. Right now 146 follow-ups wait behind 33 openers, and every day that holds makes them worse messages.</p>
+</div>
+
+<p class="meta" style="margin-top:3em">Nothing on this page is built. Measured 22 Sep 2026 against 150 Klaviyo-affiliated contacts, 12 of whom have replied.</p>
+
+</div>
