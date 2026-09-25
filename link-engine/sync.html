@@ -79,8 +79,10 @@ ul,ol{padding-left:1.3em}li{margin:.28em 0}
 <tr><td>Ready to contact</td><td>Verified email, not yet contacted (now)</td></tr>
 <tr><td>Prospects contacted</td><td>Openers confirmed sent by Instantly</td></tr>
 <tr><td>Emails sent</td><td>Openers, follow-ups and replies that left</td></tr>
-<tr><td>Reply rate</td><td>Human replies over contacted (out-of-office excluded)</td></tr>
-<tr><td>Engaged replies</td><td>Yes, a question, a price or a swap request</td></tr>
+<tr><td>Replies</td><td>Prospects who replied, any kind of reply (out-of-office included; there is no separate out-of-office category)</td></tr>
+<tr><td>Reply rate</td><td>Replies over contacted</td></tr>
+<tr><td>Interested replies</td><td>Said yes, asked for a swap, asked what is in it for them, named a price or asked our budget</td></tr>
+<tr><td>Interested rate</td><td>Interested replies over all replies</td></tr>
 <tr><td>Links won</td><td>They said yes: free, barter or paid</td></tr>
 <tr><td>Win rate</td><td>Won over contacted</td></tr>
 <tr><td>Links live</td><td>Confirmed live by a person</td></tr>
@@ -96,10 +98,10 @@ ul,ol{padding-left:1.3em}li{margin:.28em 0}
 
 <h2>4. Charts</h2>
 <ul>
-<li><b>Funnel:</b> discovered, qualified, reachable, contacted, replied, engaged, won, live, with conversion from the stage before. Log-scaled widths so 17,000 and 22 are both visible.</li>
+<li><b>Funnel:</b> discovered, qualified, reachable, contacted, replied, interested, won, live, with conversion from the stage before. Log-scaled widths so 17,000 and 22 are both visible.</li>
 <li><b>Daily outreach:</b> openers, follow-ups and our replies stacked per day, replies received overlaid.</li>
 <li><b>Links won and live, cumulative.</b></li>
-<li><b>How replies were read:</b> yes, negotiating, question, no, redirected, out of office.</li>
+<li><b>Replies by type:</b> interested, other replies, declined.</li>
 <li><b>Wins by deal type:</b> free, barter, paid.</li>
 <li><b>By method:</b> discovered to live with reply and win rates; click a method to filter the page.</li>
 <li><b>Where every conversation stands:</b> threads by state, each bar opens those threads.</li>
@@ -107,7 +109,18 @@ ul,ol{padding-left:1.3em}li{margin:.28em 0}
 <li><b>Time to first reply</b> and <b>spend in range</b>.</li>
 </ul>
 
-<h2>5. Filters and sorting, per screen</h2>
+<h2>5. Interested leads go to Naman</h2>
+<p>Added 26 Sep 2026. When a reply shows interest (a yes, a link exchange request, a value question, a price or a budget question), the agent:</p>
+<ol>
+<li>drafts an agreement or acknowledgement: agrees to the swap when a slot exists, confirms a yes, and never names or accepts a price;</li>
+<li>holds that draft for approval (it appears in Approve and in the thread, with their reply shown above it);</li>
+<li>records WON when they agreed to something we can honour;</li>
+<li>hands the thread to Naman: the agent sends nothing on it and schedules no follow-ups until it is approved or handed back;</li>
+<li>forwards their email to Naman with Farooq on CC, from the inbox it arrived in, with a note and a link to the thread. Once per reply.</li>
+</ol>
+<p>Approving queues it for the next send window; Send now sends immediately. Which intents count as interested is editable on the Strategy page (remove quote and ask_budget to let the agent negotiate price itself). Plain questions stay with the agent.</p>
+
+<h2>6. Filters and sorting, per screen</h2>
 <table>
 <tr><th>Screen</th><th>Filters</th><th>Sorting</th></tr>
 <tr><td>Overview</td><td>Range, method</td><td>Tables by any column</td></tr>
@@ -115,7 +128,7 @@ ul,ol{padding-left:1.3em}li{margin:.28em 0}
 <tr><td>Sweep</td><td>Status, method, show halted</td><td>Any column</td></tr>
 <tr><td>Prospects</td><td>State, method, lane, search, score, DR, contact, homepage target</td><td>Sort control plus any column</td></tr>
 <tr><td>Approve</td><td>Method, score band, named authors</td><td>Score or oldest</td></tr>
-<tr><td>Inbox</td><td>Needs you, replied, cold, won, closed; method; deal type; search</td><td>Needs you first, latest activity, waiting longest, next touch, DR, domain</td></tr>
+<tr><td>Inbox</td><td>Needs you, interested, replied, cold, won, closed; method; deal type; search</td><td>Needs you first, latest activity, waiting longest, next touch, DR, domain</td></tr>
 <tr><td>Won</td><td>Deal type, method, search</td><td>Newest, oldest, price, DR, domain</td></tr>
 <tr><td>Activity</td><td>Kind, range, actor (agent, person, prospect), search</td><td>Newest first</td></tr>
 <tr><td>Pipeline</td><td>Range, method</td><td>Any column</td></tr>
