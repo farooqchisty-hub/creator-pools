@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Link Engine: autonomous negotiation build plan</title>
+<style>
+:root{--ink:#111418;--mut:#5b6572;--line:#e3e7ec;--bg:#fff;--soft:#f6f8fa;--acc:#0b996e;--warn:#b45309;--err:#b91c1c;--code:#f2f4f7}
+@media(prefers-color-scheme:dark){:root{--ink:#e7ebf0;--mut:#98a2b3;--line:#232a33;--bg:#0e1116;--soft:#151a21;--acc:#34d399;--warn:#f59e0b;--err:#f87171;--code:#161b22}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:56px 22px 120px}
+h1{font-size:2.1rem;line-height:1.16;letter-spacing:-.022em;margin:0 0 .3em}
+h2{font-size:1.32rem;letter-spacing:-.014em;margin:3.2em 0 .7em;padding-top:1.1em;border-top:1px solid var(--line)}
+h3{font-size:1.02rem;letter-spacing:-.006em;margin:2em 0 .5em}
+.lede{font-size:1.08rem;color:var(--mut);margin:0 0 .4em}
+.meta{color:var(--mut);font-size:.85rem;margin:0 0 2.4em}
+table{width:100%;border-collapse:collapse;margin:1.1em 0;font-size:.89rem;display:block;overflow-x:auto}
+th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+code{font:.87em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .34em;border-radius:4px}
+pre{background:var(--code);padding:14px 16px;border-radius:9px;overflow-x:auto;font-size:.83rem;line-height:1.55;border:1px solid var(--line)}
+pre code{background:none;padding:0}
+.box{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--acc);padding:14px 18px;border-radius:0 8px 8px 0;margin:1.3em 0}
+.box.w{border-left-color:var(--warn)} .box.e{border-left-color:var(--err)}
+.box p:first-child{margin-top:0}.box p:last-child{margin-bottom:0}
+.k{font-weight:600}
+ul,ol{padding-left:1.3em}li{margin:.28em 0}
+.toc{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:16px 22px;margin:2em 0 0;font-size:.9rem}
+.toc ol{margin:.3em 0;padding-left:1.4em;columns:2;column-gap:2.4em}
+.toc a{color:var(--ink);text-decoration:none}.toc a:hover{color:var(--acc)}
+.tag{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.14em .5em;border-radius:4px;background:var(--code);color:var(--mut)}
+.tag.ok{background:rgba(11,153,110,.13);color:var(--acc)}
+.tag.no{background:rgba(185,28,28,.12);color:var(--err)}
+.q{border-left:3px solid var(--line);padding-left:16px;margin:1.2em 0;color:var(--mut);font-style:italic}
+.num{font-variant-numeric:tabular-nums}
+.dec{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:1.4em 0}
+.dec h3{margin-top:0}
+</style>
+</head><body>
+<div class="wrap">
+<h1>Link Engine: autonomous negotiation and the new dashboard</h1>
+<p class="lede">One build plan for two things you approved: an agent that pursues every prospect to a won link on its own, and a dashboard with the Creator Engine's inbox, drill-downs and manual controls.</p>
+<p class="meta">Brevo Ecom, backlink programme. Drafted 26 Sep 2026. Status: awaiting your decisions in section 12, then build.</p>
+
+<div class="box">
+<p><span class="k">The idea in one line.</span> The model reads their reply and writes ours. Code decides everything else: which lane a thread is in, when the next touch goes, what we offer, what we pay, when a deal counts as won, and when a human is needed. That split is what makes it safe to run without approval, because no amount of persuasive email from a prospect can move a number the model does not control.</p>
+</div>
+
+<div class="toc"><b>Contents</b><ol>
+<li><a href="#now">Where it stands today</a></li>
+<li><a href="#goals">Goals: won, then live</a></li>
+<li><a href="#methods">Goals per method</a></li>
+<li><a href="#lanes">The five pursuit lanes</a></li>
+<li><a href="#brain">How each reply is handled</a></li>
+<li><a href="#money">Money</a></li>
+<li><a href="#barter">Barter and value</a></li>
+<li><a href="#escalate">Escalation, kept under 3%</a></li>
+<li><a href="#guards">Guardrails</a></li>
+<li><a href="#ui">Dashboard: everything that ships</a></li>
+<li><a href="#phases">Build phases</a></li>
+<li><a href="#decide">Decisions I need</a></li>
+</ol></div>
+
+<h2 id="now">1. Where it stands today</h2>
+<ul>
+<li><b>22 openers confirmed sent</b> on Thu 24 Sep from fred@, jordan@ and tyler@ as Naman Rastogi. 0 bounces.</li>
+<li><b>2 replies.</b> An out-of-office (digitalvibesagency.com), and a real one: mailcleanup.com proposing a link exchange. The drafted answer dodged the question, so it is held.</li>
+<li><b>What does not exist yet.</b> The negotiation code classifies replies with keyword rules and hands paid threads to Naman after three replies. Follow-ups run on a 4, 10, 18 day ladder. There is no ghost handling after we reply, no concept of a won deal, no barter path, and the agent cannot accept any deal. None of that is autonomous.</li>
+</ul>
+<div class="box w"><p><b>Timing.</b> Under today's ladder, the 22 openers get their first follow-up on Tue 29 Sep. Under the new cadence it would be Mon 28 Sep, with the second on Wed 30 Sep. Phase 1 is sized to land before then.</p></div>
+
+<h2 id="goals">2. Goals: won, then live</h2>
+<p>Every thread is pursued toward one of three ways of getting the link. The ways are a reference, not a cage: a hybrid (a free link plus a social share from us) counts under the way that carries the cost.</p>
+<table>
+<tr><th>Way</th><th>What they do</th><th>What we do</th><th>Counts as won when</th></tr>
+<tr><td><b>Free</b></td><td>Add or fix the link</td><td>Nothing, or a value rung we can actually deliver</td><td>They say yes to the change</td></tr>
+<tr><td><b>Barter</b></td><td>Link to us</td><td>Link to them from a Brevo page, within the reciprocity caps</td><td>They say yes to the exchange and our side is available</td></tr>
+<tr><td><b>Paid</b></td><td>Link to us</td><td>Pay an agreed fee, <b>only after the link is live</b></td><td>They accept a price within our authority</td></tr>
+</table>
+<p><b>Won</b> is the agent's goal and is set by the engine the moment a yes is read. <b>Live</b> is the programme's goal: set by Naman on the Won board after he sees the link on their page. The engine helps by checking the page daily and flagging "our link appears to be live, confirm?", but a human makes the call.</p>
+
+<h2 id="methods">3. Goals per method</h2>
+<p>The agent always opens with the free ask and never raises money first. It moves to another way only because of something they said. Defaults below are editable on the new Strategy page.</p>
+<table>
+<tr><th>Method</th><th>Opening ask</th><th>Ways allowed, in order</th><th>Money</th></tr>
+<tr><td>M1 RENAME</td><td>Change "Sendinblue" to Brevo, fix the link</td><td>Free, then barter</td><td><span class="tag no">never</span> (database trigger)</td></tr>
+<tr><td>M2 UNLINKED</td><td>Link the mention they already have</td><td>Free, value rung, barter, paid</td><td><span class="tag ok">allowed</span> within the price band</td></tr>
+<tr><td>M3 DEADLINK</td><td>Replace a broken competitor link with ours</td><td>Free, then barter</td><td><span class="tag no">never</span> (database trigger)</td></tr>
+<tr><td>M4 RIVALGAP</td><td>Add us alongside the rivals they link</td><td>Free, value rung, barter, paid</td><td><span class="tag ok">allowed</span> within the price band</td></tr>
+<tr><td>M5 PAYBACK</td><td>Return the link we already give them</td><td>Barter (framed as reciprocity), then free</td><td><span class="tag no">not by default</span></td></tr>
+</table>
+
+<h2 id="lanes">4. The five pursuit lanes</h2>
+<p>Every thread sits in exactly one lane, and the lane decides the next touch and its date. All timing is in business days, Monday to Friday, America/Detroit, sent between 09:00 and 17:00. Openers stay on Instantly's Tuesday to Thursday schedule. Everything else goes out any weekday, because a reply that waits from Friday to Tuesday loses the conversation.</p>
+<table>
+<tr><th>Lane</th><th>Starts when</th><th>Cadence</th><th>Ends in</th></tr>
+<tr><td><b>1. Cold</b></td><td>Opener sent, no reply</td><td>Follow-up 1 at +2 business days, follow-up 2 at +4 from the opener. New angle each, 45 then 25 words.</td><td><code>no_reply</code></td></tr>
+<tr><td><b>2. Reply ghost</b></td><td>We replied, then 5 business days of silence</td><td>Nudge 1 at +5 business days after our last message, nudge 2 two business days later. Each restates the one open item and never re-pitches or lowers a price.</td><td><code>gone_quiet</code></td></tr>
+<tr><td><b>3. Negotiation</b></td><td>Any real reply that is not an absolute no</td><td>We answer every reply the same business day, inside the send window. No round cap. A stall detector (3 turns without movement) triggers a final offer.</td><td>Won, <code>declined</code>, <code>walked_away</code></td></tr>
+<tr><td><b>4. Delivery chase</b></td><td>Won, link not live yet</td><td>Confirmation the same day (exact URL, suggested anchor, paste-ready snippet, payment terms if paid), then chases at +3, +6, +10 business days. Never re-prices. Never retires on its own.</td><td>Live, or <code>delivery_stalled</code> on the Won board</td></tr>
+<tr><td><b>5. Live</b></td><td>Naman marks it live</td><td>Checks at 7, 14 and 30 days. If the link vanishes, one polite chase and an alert.</td><td><code>link_lost</code> or stays live</td></tr>
+</table>
+<p><b>What stops a lane.</b> A real reply ends the cold lane at once; an out-of-office does not, it pauses until their return date plus a day. An <b>absolute rejection</b> ("no", "not interested", "we don't add links") ends everything with no further touch. <b>Opt-out</b> language suppresses the domain forever. A no to one term (to barter, or to our price) is not absolute: the agent carries on with the ways still open.</p>
+
+<h2 id="brain">5. How each reply is handled</h2>
+<ol>
+<li><b>Safety filter first, in code.</b> Opt-out, legal and hostile language is caught by fixed rules before any model sees it.</li>
+<li><b>A structured read by GPT Luna.</b> It returns JSON, not prose: intent (agree, question, quote, counter, barter request, value request, soft yes, wrong person, absolute no, no to a term, autoreply, other), any price with currency and what it covers, what they want in a barter, their questions, a new contact if forwarded, a return date if away, and a confidence score. Stored per message so every decision can be audited.</li>
+<li><b>Deal state, in code.</b> Current way, every offer both sides have made, their last price, our last offer, the walk-away, turns without progress.</li>
+<li><b>The move, from a fixed policy table in code.</b> For example: question, so answer it and restate the ask; quote, so counter per the ladder; ask within our walk-away, so accept and mark won; barter request on an allowed method with cap left, so offer the exchange; no to barter, so hold the free ask or open paid if allowed; wrong person, so thank them and start a fresh opener to the contact they name.</li>
+<li><b>The draft, by GPT Luna.</b> Given the move as its instruction, the thread so far, the evidence card, and the one figure it is allowed to write (decided in step 4, never by the model).</li>
+<li><b>Gates, then send.</b> Factcheck (the figure must match exactly, the internal target is never revealed, no money on M1 or M3), the voice check with one automatic rewrite, then the database triggers (price ceiling, monthly budget, suppression). A pass goes out automatically.</li>
+</ol>
+
+<h2 id="money">6. Money</h2>
+<ul>
+<li><b>Never name a price first.</b> Asked for a budget, the agent asks for their rate.</li>
+<li><b>Walk-away</b> = the lowest of: 50% of their first quote, the price band for the site's authority, and what is left of the monthly budget.</li>
+<li><b>Proposed price bands</b> by domain rating: under 20, $50; 20 to 39, $100; 40 to 59, $200; 60 and above, $400. The hard ceiling stays $500 per link, and the monthly budget $3,000.</li>
+<li><b>Counter ladder:</b> 35%, then 42.5%, then 50% of their first quote, rounded to $5. It never goes backwards and never above the walk-away.</li>
+<li><b>Accepting is now autonomous.</b> Once we have countered at least once, any ask at or below the walk-away is accepted and the thread is won. This replaces "three replies, then Naman": that rule made every paid thread an escalation, which cannot scale.</li>
+<li><b>Final offer:</b> after three counters, one last offer at the walk-away ("that's the most we can do"). If refused, the thread closes as <code>walked_away</code> with their price kept as rate-card intel. Not an escalation.</li>
+<li><b>Payment terms, stated at acceptance:</b> paid once the link is live, never upfront, never a deposit. Naman pays from the Won board and marks it paid.</li>
+</ul>
+
+<h2 id="barter">7. Barter and value</h2>
+<p><b>Barter</b> needs a real place for our side of the link. The plan adds a small reciprocity inventory: Brevo pages that can carry an outbound link, by topic, with who places it. The agent offers "a link from a relevant Brevo post" and never promises a specific page that is not in the inventory. Caps already in the database: 25 a quarter, one per domain. On a won barter, Naman gets a task to place our link within 5 business days of theirs going live.</p>
+<p><b>Value rungs</b> are the free path's sweeteners. The engine already lists nine, but most promise work somebody else has to do (benchmark data, extended plans, Expert Directory listings, guest posts, co-marketing). The agent may only offer a rung with a named owner who has agreed to deliver it. Everything else is off until someone owns it.</p>
+
+<h2 id="escalate">8. Escalation, kept under 3%</h2>
+<p>Only these reach Naman, each with a reason code. Everything else is handled by the agent.</p>
+<table>
+<tr><th>#</th><th>Case</th><th>Why a human</th></tr>
+<tr><td>1</td><td>Legal threat, complaint about us, data or GDPR request</td><td>Reputational and legal exposure</td></tr>
+<tr><td>2</td><td>Asks outside the three ways: guest post writing, sitewide or footer links, multi-link packages, contracts or NDAs, upfront payment, a call they insist on after one "email works best"</td><td>Commitments the agent is not authorised to make</td></tr>
+<tr><td>3</td><td>A deal the budget cannot cover this month</td><td>Money beyond authority</td></tr>
+<tr><td>4</td><td>Barter beyond the caps, or needing a Brevo page not in the inventory</td><td>Needs a page owner's yes</td></tr>
+<tr><td>5</td><td>Asks whether they are talking to a person or a bot, or who our manager is</td><td>Honesty question, a person answers it</td></tr>
+<tr><td>6</td><td>The read comes back low-confidence twice, or the reply fails the gates twice, on the same thread</td><td>The agent cannot produce a safe answer</td></tr>
+</table>
+<p>The Today page shows the rolling 30-day escalation rate against the 3% target, and alerts above it. Paying, placing a barter link and marking live are Won-board work, not escalations.</p>
+
+<h2 id="guards">9. Guardrails</h2>
+<p>Each of these was learned the hard way on the Creator Engine and is built in from day one.</p>
+<ul>
+<li><b>Per person, not per message:</b> at most one touch per prospect per 48 hours, across every lane.</li>
+<li><b>Every lane checks</b> suppression, opt-out and manual takeover. A new lane that forgets one of these is exactly how the Creator Engine emailed 12 suppressed addresses.</li>
+<li><b>Take over means stop</b> on every path: drafting, follow-ups, nudges and dispatch.</li>
+<li><b>Each lane draws its own rows</b> under its own limit. A shared batch let one lane starve another for 12 days.</li>
+<li><b>Retry ceiling:</b> 5 failed drafts on one thread in 7 days is an escalation, not a loop.</li>
+<li><b>Replies before follow-ups before openers</b> when an inbox is near its daily cap.</li>
+<li><b>Instantly stays one step.</b> A second step added in Instantly's UI would send outside every rule here, so a daily check asserts it.</li>
+<li><b>Read the last message</b> before trusting a stage.</li>
+<li><b>A daily rule sweep.</b> Structural checks may fix things, but only by holding or cancelling. A judgement pass by Luna over pending messages may only hold, never cancel.</li>
+<li><b>A scenario suite gates the launch:</b> 50+ scripted replies (quotes, counters, barter asks, rejections, questions, autoreplies, wrong person, hostile, ambiguous) run end to end against the real schema and triggers, asserting the move, the figure and the state. All must pass before autonomy is switched on.</li>
+</ul>
+
+<h2 id="ui">10. Dashboard: everything that ships</h2>
+<h3>Inbox (a real DM inbox)</h3>
+<ol>
+<li>Three panes: conversations, thread, context. Rows carry an avatar, preview, time ago and pills: replied, we owe a reply, needs you, you have it, quote, won, live.</li>
+<li>Filter chips with counts (All, Replied, Needs you, Negotiating, Won, Live, You have it, No reply, Gone quiet, Declined, Opted out, Unread) and search. Dead threads hidden by default, which fixes the 70 phantom rows.</li>
+<li>Take over and Resume automation, with a banner while you hold it.</li>
+<li>Reply composer: Queue for approval or Send now, from the thread's own inbox as Naman, with you both CC'd.</li>
+<li>Approve or edit held drafts inside the thread.</li>
+<li>Share: copies a link straight to the thread.</li>
+<li>Context panel: the page and quote we used, method, <b>current way and ladder position</b>, their ask and our offer (walk-away visible only here), lane, <b>next scheduled touch with its date</b>, escalation reason, and a plain "what happens next".</li>
+<li>Planned touches shown in the thread as faint bubbles ("Follow-up 1, Mon 28 Sep, 10:00"), and each real message shows who wrote it, the inbox, and delivery state. Fixes the handoff time showing as the send time.</li>
+</ol>
+<h3>Won board (Naman's page)</h3>
+<ol start="9">
+<li>Columns: Won, awaiting link / Detected live, confirm / Live / Lost. Each row: domain, way, agreed price, payment status, barter obligation, target URL, days since won, chases sent.</li>
+<li>Actions: <b>Mark live</b> (paste the URL; the engine checks it links to brevo.com and records anchor and rel), Not live yet, Mark paid, Our barter link placed, Link removed, notes.</li>
+</ol>
+<h3>Today</h3>
+<ol start="11">
+<li>Clickable KPI tiles that open the filtered list behind them, each with a "% of" subtitle and a definition tooltip: contacted, replied, negotiating, won by way, live, won rate, live rate, cost per live link, budget committed, escalation rate against 3%.</li>
+<li>Alert strip with click-through: needs you, held for you, you have N threads, incidents, sending off, stale data.</li>
+<li>Cumulative funnel from discovered to live, and a sending-capacity card per inbox.</li>
+<li>Agent feed: questions the agent raises, plus a "tell the agent something" box that becomes knowledge in later drafts.</li>
+</ol>
+<h3>New pages</h3>
+<ol start="15">
+<li><b>Strategy</b> (replaces Policy): cadences, ways per method, price bands, budget used and remaining, reciprocity inventory and caps, value rungs on or off, escalation rules.</li>
+<li><b>Sent log:</b> every outbound with delivery state and sending inbox, Instantly stats, sent by day, a Sync button.</li>
+<li><b>Prospect drawer:</b> click any domain to see its full history, with suppress, recheck, note and edit-email actions.</li>
+<li><b>Manual worklist</b> for the form-or-social prospects: open the form, mark reached, log their reply.</li>
+<li><b>Teach the agent</b> per thread or as a global rule, with a guard so no note can move a ceiling, an opt-out or suppression; each message shows which rules shaped it. Plus a Learned rules page.</li>
+<li><b>Analytics</b> (reply rate by touch, won mix, cost per link, per method and per inbox) and <b>Activity</b> (incidents with Resolve, cron status, audit trail, emergency stop).</li>
+<li>Polish: 60-second auto-refresh and reload on a new build (paused while typing), toasts, light and dark theme, nav badges that count what needs you.</li>
+</ol>
+
+<h2 id="phases">11. Build phases</h2>
+<table>
+<tr><th>Phase</th><th>Engine</th><th>Dashboard</th></tr>
+<tr><td><b>1. Pursuit core</b><br><span class="tag">target Mon 28 Sep</span></td><td>Business-day scheduler; Monday to Friday replies; cold lane (+2, +4); reply-ghost lane (5, then 2); per-person 48h gap; per-lane queries; takeover, suppression and capacity priority on every path</td><td>Inbox items 1 to 6: panes, chips, search, dead rows hidden, take over and resume, composer, share, approve in thread</td></tr>
+<tr><td><b>2. Negotiation brain</b></td><td>Structured reads, deal state, move policy, money and barter rules, won detection and confirmation, escalation reason codes, scenario suite</td><td>Context panel with way, offers and next touch; planned touches in the thread; Needs you queue</td></tr>
+<tr><td><b>3. Won to live</b></td><td>Delivery chase, daily live detection, 7/14/30 survival checks, payment and barter tasks</td><td>Won board with Mark live, Mark paid, barter placed</td></tr>
+<tr><td><b>4. Control</b></td><td>Strategy config read by every lane, reciprocity inventory, value-rung owners</td><td>Strategy page, clickable Today tiles, alert strip, funnel, capacity, Sent log, prospect drawer, manual worklist</td></tr>
+<tr><td><b>5. Learning and ops</b></td><td>Teach and rules with the hard guard, agent feed, daily rule sweep</td><td>Teach box, Learned rules, Analytics, Activity, polish</td></tr>
+</table>
+<p>Each phase ships behind the existing gates and the full test suite, deployed through <code>deploy.sh</code>, and is verified live before the next starts.</p>
+
+<h2 id="decide">12. Decisions I need</h2>
+<p>Each has a recommended default. "Go with defaults" settles all of them.</p>
+<div class="dec"><h3>1. Send days</h3><p>Openers stay Tuesday to Thursday; follow-ups, nudges and replies go Monday to Friday. <b>Default: yes.</b></p></div>
+<div class="dec"><h3>2. Cold follow-ups</h3><p>Two follow-ups (+2 and +4 business days) or three? <b>Default: two.</b></p></div>
+<div class="dec"><h3>3. Price bands and payment</h3><p>The bands in section 6, paid after the link is live, by Naman. Which method: PayPal, Wise, or invoice? <b>Default: the bands as proposed, PayPal.</b></p></div>
+<div class="dec"><h3>4. Barter</h3><p>Is a reciprocal link from Brevo real, from which pages, and who places it? This also settles the mailcleanup.com reply. <b>Default: yes, from Brevo blog posts, placed by Naman.</b></p></div>
+<div class="dec"><h3>5. Value rungs</h3><p>Which sweeteners have an owner? <b>Default: only the correction frame and a quote from Naman; everything else off until someone owns it.</b></p></div>
+<div class="dec"><h3>6. After an absolute no</h3><p>You said stop. The Creator Engine tries twice more before giving up. <b>Default: stop, as you said.</b></p></div>
+</div>
+
+</body></html>
