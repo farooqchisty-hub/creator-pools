@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Link Engine: Overview and Data Sync</title>
+<style>
+:root{--ink:#111418;--mut:#5b6572;--line:#e3e7ec;--bg:#fff;--soft:#f6f8fa;--acc:#0b996e;--warn:#b45309;--err:#b91c1c;--code:#f2f4f7}
+@media(prefers-color-scheme:dark){:root{--ink:#e7ebf0;--mut:#98a2b3;--line:#232a33;--bg:#0e1116;--soft:#151a21;--acc:#34d399;--warn:#f59e0b;--err:#f87171;--code:#161b22}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:56px 22px 120px}
+h1{font-size:2.1rem;line-height:1.16;letter-spacing:-.022em;margin:0 0 .3em}
+h2{font-size:1.32rem;letter-spacing:-.014em;margin:3.2em 0 .7em;padding-top:1.1em;border-top:1px solid var(--line)}
+h3{font-size:1.02rem;letter-spacing:-.006em;margin:2em 0 .5em}
+.lede{font-size:1.08rem;color:var(--mut);margin:0 0 .4em}
+.meta{color:var(--mut);font-size:.85rem;margin:0 0 2.4em}
+table{width:100%;border-collapse:collapse;margin:1.1em 0;font-size:.89rem;display:block;overflow-x:auto}
+th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+code{font:.87em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .34em;border-radius:4px}
+pre{background:var(--code);padding:14px 16px;border-radius:9px;overflow-x:auto;font-size:.83rem;line-height:1.55;border:1px solid var(--line)}
+pre code{background:none;padding:0}
+.box{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--acc);padding:14px 18px;border-radius:0 8px 8px 0;margin:1.3em 0}
+.box.w{border-left-color:var(--warn)} .box.e{border-left-color:var(--err)}
+.box p:first-child{margin-top:0}.box p:last-child{margin-bottom:0}
+.k{font-weight:600}
+ul,ol{padding-left:1.3em}li{margin:.28em 0}
+.toc{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:16px 22px;margin:2em 0 0;font-size:.9rem}
+.toc ol{margin:.3em 0;padding-left:1.4em;columns:2;column-gap:2.4em}
+.toc a{color:var(--ink);text-decoration:none}.toc a:hover{color:var(--acc)}
+.tag{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.14em .5em;border-radius:4px;background:var(--code);color:var(--mut)}
+.tag.ok{background:rgba(11,153,110,.13);color:var(--acc)}
+.tag.no{background:rgba(185,28,28,.12);color:var(--err)}
+.q{border-left:3px solid var(--line);padding-left:16px;margin:1.2em 0;color:var(--mut);font-style:italic}
+.num{font-variant-numeric:tabular-nums}
+.dec{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:1.4em 0}
+.dec h3{margin-top:0}
+</style>
+</head>
+<body>
+<main style="max-width:860px;margin:0 auto;padding:48px 20px 80px">
+<h1>Link Engine: Overview and data sync</h1>
+<p class="lede">How the dashboard stays current, what the Overview measures, and the filters and sorting on every screen.</p>
+<p class="meta">Brevo Link Engine · built and live 26 Sep 2026 · <a href="https://brevo-link-engine.pages.dev/#overview">open the Overview</a> · <a href="./">build plan</a></p>
+
+<div class="box">The dashboard reads the database live on every request. What goes stale is how often the database hears from the outside world: Instantly (replies, sends, bounces), the link checker and discovery. So the sync plan tiers each source by how fast it actually changes, records every run, and shows the age of each source on the page.</div>
+
+<h2>1. Sync tiers</h2>
+<table>
+<tr><th>Tier</th><th>Cadence</th><th>What runs</th><th>Why this often</th></tr>
+<tr><td>Realtime</td><td>Instantly webhook</td><td>Reply ingested, then the brain reads and drafts the answer immediately</td><td>A reply is the most time-sensitive event there is</td></tr>
+<tr><td>Fast</td><td>Every 5 min</td><td>Reply poll (backstop for a missed webhook), brain, sent reconciliation, dispatch</td><td>Sends leave within 5 minutes of falling due; a missed webhook costs at most 5 minutes</td></tr>
+<tr><td>Provider</td><td>Every 15 min</td><td>Instantly lead statuses (bounces, unsubscribes), campaign and per-inbox daily stats</td><td>A bounce must stop the next follow-up; stats move slowly and cost a paginated call</td></tr>
+<tr><td>Heavy</td><td>:00 and :30</td><td>Enrich, draft openers, pursuit scheduling, draft follow-ups, house-rule check, then dispatch</td><td>Model calls and third-party lookups; runs where the 5-minute tick would otherwise run</td></tr>
+<tr><td>Hourly</td><td>:15</td><td>KPI snapshot, digest, link checks that have fallen due</td><td>Off the hour so it never reads tables mid-write</td></tr>
+<tr><td>Daily</td><td>05:00 UTC</td><td>Counter reset, ramp, rechecks</td><td>Daily limits</td></tr>
+<tr><td>Weekly</td><td>Sun 02:00 UTC</td><td>Discovery sweep</td><td>Ahrefs and SERP cost</td></tr>
+</table>
+<h3>Safety built into the schedule</h3>
+<ul>
+<li><b>One trigger for fast and heavy.</b> The 5-minute cron decides which tier to run from the minute, so the two tiers never run the same step at once.</li>
+<li><b>Dispatch lease.</b> Dispatch holds a 4-minute lease in the database. A slow cycle still sending when the next tick fires cannot send the same reply twice. Expired leases are taken over.</li>
+<li><b>Sync now never sends.</b> The dashboard button pulls from Instantly and reads new replies; sending stays on the Worker's schedule and inside the Mon to Fri, 09:00 to 17:00 Detroit window.</li>
+<li><b>Bounces close threads.</b> Instantly status -1 closes the thread as bounced, unverifies the contact and cancels queued follow-ups; -2 suppresses the domain. The first run found <code>paul@ecommerce-gold.com</code> had bounced on 24 Sep with a follow-up booked for Monday.</li>
+</ul>
+
+<h2>2. Freshness, visible</h2>
+<p>Every step writes <code>sync_state</code>: last run, last success, last error, run counts. The Overview's freshness strip shows each source's age against its own threshold (green, amber, red): replies, sends and dispatch 15 min; bounces and Instantly stats 30 min; drafting and schedule 60 min; KPI snapshot and link checks 120 min; discovery 8 days.</p>
+<p>The page polls <code>/api/sync/status</code> every 20 seconds. That returns a data version built from a handful of MAX and COUNT lookups; the Overview, Today, Won and Activity redraw only when it moves. The Overview itself is cached in KV keyed by that version (2 minute ceiling), so polling does not re-read the database.</p>
+
+<h2>3. Overview KPIs</h2>
+<p>Counting rule: events inside the selected range (7, 30, 90 days or all), compared with the same-length period before. Filterable by method. Every tile links to the rows behind it.</p>
+<table>
+<tr><th>KPI</th><th>Definition</th></tr>
+<tr><td>Pages discovered</td><td>Raw candidates the sweeps found</td></tr>
+<tr><td>Qualified prospects</td><td>Passed routing and scoring</td></tr>
+<tr><td>Ready to contact</td><td>Verified email, not yet contacted (now)</td></tr>
+<tr><td>Prospects contacted</td><td>Openers confirmed sent by Instantly</td></tr>
+<tr><td>Emails sent</td><td>Openers, follow-ups and replies that left</td></tr>
+<tr><td>Reply rate</td><td>Human replies over contacted (out-of-office excluded)</td></tr>
+<tr><td>Engaged replies</td><td>Yes, a question, a price or a swap request</td></tr>
+<tr><td>Links won</td><td>They said yes: free, barter or paid</td></tr>
+<tr><td>Win rate</td><td>Won over contacted</td></tr>
+<tr><td>Links live</td><td>Confirmed live by a person</td></tr>
+<tr><td>Won to live</td><td>Share of wins in range now live</td></tr>
+<tr><td>Cost per won link</td><td>Paid spend over all wins (free and barter at $0)</td></tr>
+<tr><td>Days to first reply</td><td>Median, opener to first human reply</td></tr>
+<tr><td>Days to win</td><td>Median, opener to yes</td></tr>
+<tr><td>Bounce rate</td><td>Instantly bounces over Instantly sends</td></tr>
+<tr><td>Escalation rate</td><td>Escalated over replied; target 3%</td></tr>
+<tr><td>Live conversations</td><td>Threads the agent is negotiating (now)</td></tr>
+<tr><td>Touches due in 24h</td><td>Scheduled follow-ups, re-engages and chases (now)</td></tr>
+</table>
+
+<h2>4. Charts</h2>
+<ul>
+<li><b>Funnel:</b> discovered, qualified, reachable, contacted, replied, engaged, won, live, with conversion from the stage before. Log-scaled widths so 17,000 and 22 are both visible.</li>
+<li><b>Daily outreach:</b> openers, follow-ups and our replies stacked per day, replies received overlaid.</li>
+<li><b>Links won and live, cumulative.</b></li>
+<li><b>How replies were read:</b> yes, negotiating, question, no, redirected, out of office.</li>
+<li><b>Wins by deal type:</b> free, barter, paid.</li>
+<li><b>By method:</b> discovered to live with reply and win rates; click a method to filter the page.</li>
+<li><b>Where every conversation stands:</b> threads by state, each bar opens those threads.</li>
+<li><b>Sending inboxes:</b> Instantly's sent, bounced and bounce rate per inbox beside ours.</li>
+<li><b>Time to first reply</b> and <b>spend in range</b>.</li>
+</ul>
+
+<h2>5. Filters and sorting, per screen</h2>
+<table>
+<tr><th>Screen</th><th>Filters</th><th>Sorting</th></tr>
+<tr><td>Overview</td><td>Range, method</td><td>Tables by any column</td></tr>
+<tr><td>Today</td><td>Range</td><td>Tables by any column</td></tr>
+<tr><td>Sweep</td><td>Status, method, show halted</td><td>Any column</td></tr>
+<tr><td>Prospects</td><td>State, method, lane, search, score, DR, contact, homepage target</td><td>Sort control plus any column</td></tr>
+<tr><td>Approve</td><td>Method, score band, named authors</td><td>Score or oldest</td></tr>
+<tr><td>Inbox</td><td>Needs you, replied, cold, won, closed; method; deal type; search</td><td>Needs you first, latest activity, waiting longest, next touch, DR, domain</td></tr>
+<tr><td>Won</td><td>Deal type, method, search</td><td>Newest, oldest, price, DR, domain</td></tr>
+<tr><td>Activity</td><td>Kind, range, actor (agent, person, prospect), search</td><td>Newest first</td></tr>
+<tr><td>Pipeline</td><td>Range, method</td><td>Any column</td></tr>
+<tr><td>Links</td><td>Outcome, method, DR, days to live</td><td>Any column</td></tr>
+<tr><td>Inboxes</td><td>Status</td><td>Sort control plus any column</td></tr>
+<tr><td>Policy</td><td>Suppression search; quotes by method and amount</td><td>Any column</td></tr>
+</table>
+<p>Column sorting sorts numbers descending first and text ascending first, keeps blanks last, and saves the choice in the URL so a sorted view can be shared.</p>
+</main>
+</body>
+</html>
