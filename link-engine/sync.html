@@ -137,6 +137,27 @@ ul,ol{padding-left:1.3em}li{margin:.28em 0}
 <tr><td>Policy</td><td>Suppression search; quotes by method and amount</td><td>Any column</td></tr>
 </table>
 <p>Column sorting sorts numbers descending first and text ascending first, keeps blanks last, and saves the choice in the URL so a sorted view can be shared.</p>
+
+<h2>7. Discovery and contact forms (13 Oct 2026)</h2>
+<p><b>Why it changed.</b> The Ahrefs API plan lapsed, and the sweep began with an Ahrefs budget call, so it would have failed outright. M3, M4 and M5 also asked Ahrefs the same fixed question every week. On top of that, M4 and M5 returned homepages, which the router rejects, so neither had ever produced a prospect.</p>
+<table>
+<tr><th>Method</th><th>Source now</th><th>What a row is</th></tr>
+<tr><td>M1 rename</td><td>Google searches, rotated weekly, plus DataForSEO backlinks to sendinblue.com</td><td>A page still saying or linking Sendinblue</td></tr>
+<tr><td>M2 unlinked</td><td>Google searches: base set plus a different 30 from a ~300-query pool each week</td><td>A page naming Brevo without a link</td></tr>
+<tr><td>M3 dead link</td><td>DataForSEO backlinks to competitors, filtered to 404/410 content pages</td><td>A page whose link to a competitor's article is broken, with the sentence around it</td></tr>
+<tr><td>M4 rival gap</td><td>DataForSEO page intersection: two competitors linked, Brevo and Sendinblue not</td><td>A list or guide recommending rivals and not us</td></tr>
+<tr><td>M5 payback</td><td>Sites brevo.com links to, each resolved to one relevant article</td><td>A page on a site we already send links to</td></tr>
+</table>
+<p>Every sweep reads a different slice of each source. Before drafting, each method's own claim is re-checked on the live page: the dead link is still there and still dead, or the rival is still linked. A Brevo mention is no longer required where the pitch never needed one. The first rebuilt sweep qualified 19 M3, 19 M4 and 1 M5 prospects. Cost is about $1 a sweep.</p>
+<p><b>Contact forms.</b> About 45% of publishers we qualify have no email address, only a form. Their opener is now typed into their own form by a headless browser, within the opener window, at most 15 a day.</p>
+<ul>
+<li>A form with a CAPTCHA is never attempted.</li>
+<li>A required field we cannot fill truthfully (a phone number, a budget) is never invented.</li>
+<li>Honeypot fields are left empty.</li>
+<li>Sales, demo and support forms are skipped.</li>
+</ul>
+<p>The reply address is one of our inboxes, so a reply from any address at their domain, or one carrying our subject line, joins the thread. Form threads get no follow-ups and close after 7 quiet business days. Anything the browser cannot send lands on the Manual outreach page with the message, the name and the reply address ready to paste.</p>
+<p><b>Known gap.</b> Picking the best Brevo page for each prospect read Google Search Console through Ahrefs. Without the Ahrefs plan, those prospects are pointed at the Brevo homepage.</p>
 </main>
 </body>
 </html>
