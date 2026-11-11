@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Backlink Hacks for Brevo</title>
+<style>
+:root{--ink:#111418;--mut:#5b6572;--line:#e3e7ec;--bg:#fff;--soft:#f6f8fa;--acc:#0b996e;--warn:#b45309;--err:#b91c1c;--code:#f2f4f7}
+@media(prefers-color-scheme:dark){:root{--ink:#e7ebf0;--mut:#98a2b3;--line:#232a33;--bg:#0e1116;--soft:#151a21;--acc:#34d399;--warn:#f59e0b;--err:#f87171;--code:#161b22}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:920px;margin:0 auto;padding:48px 18px 100px}
+h1{font-size:2rem;line-height:1.16;letter-spacing:-.022em;margin:0 0 .3em}
+h2{font-size:1.3rem;letter-spacing:-.014em;margin:2.8em 0 .7em;padding-top:1.1em;border-top:1px solid var(--line)}
+h3{font-size:1.02rem;margin:1.8em 0 .5em}
+.lede{font-size:1.06rem;color:var(--mut);margin:0 0 .4em}
+.meta{color:var(--mut);font-size:.85rem;margin:0 0 2em}
+table{width:100%;border-collapse:collapse;margin:1em 0;font-size:.86rem;display:block;overflow-x:auto}
+th,td{text-align:left;padding:.48rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mut);font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+code{font:.86em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .34em;border-radius:4px;word-break:break-word}
+.box{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--acc);padding:14px 18px;border-radius:0 8px 8px 0;margin:1.2em 0}
+.box.w{border-left-color:var(--warn)}.box.e{border-left-color:var(--err)}
+.box p:first-child{margin-top:0}.box p:last-child{margin-bottom:0}
+ul,ol{padding-left:1.3em}li{margin:.3em 0}
+.tag{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.14em .5em;border-radius:4px;background:var(--code);color:var(--mut);white-space:nowrap}
+.tag.ok{background:rgba(11,153,110,.14);color:var(--acc)}
+.tag.no{background:rgba(185,28,28,.12);color:var(--err)}
+.tag.mid{background:rgba(180,83,9,.13);color:var(--warn)}
+.tag.jp{background:#0b996e;color:#fff}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.toc{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px 20px;font-size:.9rem}
+.toc ol{margin:.3em 0;padding-left:1.4em}
+.toc a{color:var(--ink);text-decoration:none}.toc a:hover{color:var(--acc)}
+a{color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:1.2em 0}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat b{display:block;font-size:1.5rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{color:var(--mut);font-size:.82rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Backlink hacks for Brevo</h1>
+<p class="lede">The reel's hack, 10 hacks tested in round 1, the search framework those tests produced, and what round 2 found with it.</p>
+<p class="meta">Brevo Link Engine research · 12 Nov 2026 · data: DataForSEO via treg, live HTML checks, Google SERP · <a href="brevo_redirect_map.csv">redirect map (CSV)</a> · <a href="../sync.html">Link Engine</a></p>
+
+<div class="box">
+<p><b>Bottom line.</b> The reel's hack works, but for a brand with 91k referring domains it adds 1 domain. About 56% of the viral "dofollow" hacks we could read are nofollow, ugc or redirect-wrapped. The big wins sit in three places:</p>
+<ul>
+<li><b>Inside Brevo's own house:</b> dead URLs, a broken apex domain and legacy domains. Thousands of linking domains, fixed with no outreach.</li>
+<li><b>What customers copy onto their own sites:</b> legal clauses, sub-processor lists, badges.</li>
+<li><b>Developer docs and marketplaces where rivals are linked and Brevo is not.</b></li>
+</ul>
+</div>
+
+<div class="grid">
+<div class="stat"><b>1,165</b><span>referring domains (RDs) on <code>https://brevo.com/</code>, which returns a 404 (Vercel DEPLOYMENT_NOT_FOUND)</span></div>
+<div class="stat"><b>4,743</b><span>dofollow RDs in the ready 301 map (top 300 dead URLs)</span></div>
+<div class="stat"><b>noindex</b><span>Brevo's Shopify App Store listing, sent to Googlebot. Klaviyo, Omnisend and Mailchimp listings are indexable.</span></div>
+<div class="stat"><b>65 of 94</b><span>sub-processor pages that name Brevo but don't link it</span></div>
+</div>
+
+<div class="toc"><b>Contents</b>
+<ol>
+<li><a href="#seed">The reel</a></li>
+<li><a href="#r1">Round 1: 10 hacks tested</a></li>
+<li><a href="#learn">What round 1 taught us</a></li>
+<li><a href="#fw">The framework: how to find and validate hacks</a></li>
+<li><a href="#r2">Round 2: what the framework found</a></li>
+<li><a href="#myths">Busted myths</a></li>
+<li><a href="#plan">Action plan</a></li>
+<li><a href="#method">Method, files, cost</a></li>
+</ol></div>
+
+<h2 id="seed">1. The reel</h2>
+<p><b>Source:</b> @marketingbyaabhas, 10 Nov, 33.7 s, 58,971 plays.</p>
+<p><b>Claim:</b> "a DR 76 dofollow backlink in 10 minutes."
+<ol>
+<li>Write an X thread with your URL in it.</li>
+<li>Reply to it tagging <code>@threadreaderapp unroll</code>.</li>
+<li>Thread Reader App publishes the thread as a page that carries your link.</li>
+</ol>
+</p>
+<table>
+<tr><th>Check</th><th>Result</th></tr>
+<tr><td>Page indexable</td><td><span class="tag ok">pass</span> 200, no noindex, robots.txt allows. Google indexes <code>/thread/</code> pages.</td></tr>
+<tr><td>Link dofollow in raw HTML</td><td><span class="tag ok">pass</span> Links in the thread body carry no rel (e.g. <code>godaddy.com</code>, <code>figma.com</code>). Googlebot gets the same HTML.</td></tr>
+<tr><td>Backlink index confirms</td><td><span class="tag ok">pass</span> DataForSEO records a dofollow Mailchimp link from threadreaderapp.com.</td></tr>
+<tr><td>Brevo today</td><td>0 links from the host. <code>site:threadreaderapp.com brevo</code> returns 0.</td></tr>
+<tr><td>Value</td><td><span class="tag">filler</span> Host rank 438/1000, spam score 25. +1 referring domain on Brevo's 91,207.</td></tr>
+<tr><td>Claim accuracy</td><td><span class="tag mid">loose</span> The reel's own Ahrefs graphics show DR 75 and 60, not 76.</td></tr>
+</table>
+
+<h2 id="r1">2. Round 1: 10 hacks tested</h2>
+<p><b>Selection:</b> picked from 98 mechanisms gathered by three research passes (short-form social; forums like Reddit, BlackHatWorld, Indie Hackers and HN; GitHub and the web). The 10 span every pattern.</p>
+<p><b>Verification:</b> every verdict below was re-checked here, not taken from the research notes. Each one rests on:</p>
+<ul>
+<li>the live HTML (rel attributes, robots meta, X-Robots-Tag; JS pages rendered first)</li>
+<li>a Google footprint search</li>
+<li>a DataForSEO backlink index lookup</li>
+</ul>
+<table>
+<tr><th>#</th><th>Hack</th><th>Pattern</th><th>Verdict</th><th>Evidence</th><th>Brevo today</th><th>Tier</th></tr>
+<tr><td>1</td><td>Thread Reader unroll (the reel)</td><td>Auto-generated page</td><td><span class="tag ok">works</span></td><td>See above</td><td>0 links</td><td><span class="tag">filler</span></td></tr>
+<tr><td>2</td><td>Grokipedia references</td><td>Auto-generated page (AI)</td><td><span class="tag ok">works</span></td><td>Brevo page: 40 links to brevo.com, all dofollow, index,follow</td><td class="num">45 links vs Mailchimp 270, Klaviyo 123</td><td><span class="tag">solid</span></td></tr>
+<tr><td>3</td><td>SaaS app marketplaces: Stripe Apps, Google Workspace, DigitalOcean</td><td>Listing</td><td><span class="tag ok">works</span></td><td>
+<ul>
+<li>Stripe vendor links <code>rel="noopener"</code> after JS render.</li>
+<li>Google Workspace gives the developer 5 dofollow links per listing.</li>
+<li>DigitalOcean is dofollow.</li>
+</ul></td><td>No official listing on any of the three. Google Workspace has only a third-party "ConnectTo Brevo" add-on.</td><td><span class="tag">solid</span></td></tr>
+<tr><td>4</td><td>Shopify App Store listing</td><td>Own listing</td><td><span class="tag no">blocked</span></td><td><code>apps.shopify.com/sendinblue</code> sends <code>X-Robots-Tag: noindex,nofollow</code> to browsers and Googlebot. Klaviyo, Omnisend, Mailchimp and PushOwl listings send none. Google indexes only a third-party "SyncBre Tools for Brevo" listing.</td><td class="num">21 links from apps.shopify.com vs Klaviyo 214</td><td><span class="tag jp">jackpot</span></td></tr>
+<tr><td>5</td><td>Framework docs that list email providers: Laravel, Auth.js, Medusa</td><td>Contribution</td><td><span class="tag ok">works</span></td><td>
+<ul>
+<li><b>Laravel:</b> mail docs name Brevo 48 to 52 times per version with 0 links. Resend, Postmark and Mailgun are linked dofollow on 11.x, 12.x and master.</li>
+<li><b>Auth.js and Medusa:</b> provider pages are dofollow.</li>
+</ul></td><td class="num">0 links. Rivals: Laravel to Resend 16, Medusa to SendGrid 21, Auth.js to Resend 5.</td><td><span class="tag">solid</span></td></tr>
+<tr><td>6</td><td>Pipedream components (open source)</td><td>Contribution, page per action</td><td><span class="tag ok">works</span></td><td>Each action page links <code>developers.brevo.com</code> dofollow. Brevo has 2 actions and 3 triggers; SendGrid 33 actions; Postmark 28 actions and 7 triggers; Mailchimp 29 and 15.</td><td class="num">75 links vs SendGrid 21,104, Klaviyo 6,894</td><td><span class="tag">solid</span></td></tr>
+<tr><td>7</td><td>Partner pages that name Brevo without a link</td><td>Reclamation</td><td><span class="tag ok">works</span></td><td>WPForms Brevo page: 87 mentions, 0 links. Gravity Forms add-on: 68, 0. ReallyGoodEmails: 48, 0. Albato: 369, 0 (spam score 38, skip). n8n pages link no vendor at all (skip).</td><td>Warm asks, partners already integrated</td><td><span class="tag">solid</span></td></tr>
+<tr><td>8</td><td>Brevo's own dead URLs, incl. the apex domain</td><td>Reclamation (own house)</td><td><span class="tag jp">jackpot</span></td><td>
+<ul>
+<li><b>Apex domain:</b> <code>brevo.com</code> without www returns 404 (Vercel DEPLOYMENT_NOT_FOUND), so every link to it dies.</li>
+<li><b>Dead URLs:</b> 3,052 linked brevo.com URLs return 404. Together they carry 5,293 referring domains (3,994 dofollow) and 61,492 backlinks.</li>
+<li><b>Largest single loss:</b> the old Newsletter2Go recipient-info page <code>/de/informationen-newsletter-empfaenger/</code>, with 1,167 referring domains.</li>
+</ul></td><td>617 apex URLs with links; the apex homepage alone has 1,165 referring domains</td><td><span class="tag jp">jackpot</span></td></tr>
+<tr><td>9</td><td>Legacy and acquired domains</td><td>Reclamation (rebrand)</td><td><span class="tag jp">jackpot</span></td><td>
+<ul>
+<li><b>Dead sendinblue.com URLs:</b> 1,238 return 404, carrying 1,983 referring domains and 138k backlinks. Most are old hosted signup forms.</li>
+<li><b>Bad redirects:</b> of the top 400 sendinblue.com redirects, 67 end on an error page (2,058 referring domains). Examples: API docs and the recipient-info page (404s), and account.sendinblue.com, which ends in an HTTP 525.</li>
+<li><b>newsletter2go.com</b> (5,374 referring domains): every path lands on a login screen.</li>
+<li><b>metrilo.com/blog/:</b> returns HTTP 500.</li>
+</ul></td><td>Equity stranded on dead ends</td><td><span class="tag jp">jackpot</span></td></tr>
+<tr><td>10</td><td>"Powered by Brevo" badge on free-plan forms and pages</td><td>Embed / badge (product)</td><td><span class="tag ok">works</span> (proven by rivals)</td><td>
+<ul>
+<li><b>Mailchimp:</b> its referral badge URL alone has 5,387 referring domains with 0 nofollow, and about 904k utm-tagged Mailchimp URLs carry links.</li>
+<li><b>Omnisend:</b> uses a dofollow form badge.</li>
+<li><b>Brevo:</b> 3 hosted Brevo forms checked carry no Brevo link at all. Brevo's email-logo links earn about 136 referring domains in total.</li>
+</ul></td><td>No badge link</td><td><span class="tag jp">jackpot</span></td></tr>
+</table>
+
+<h2 id="learn">3. What round 1 taught us</h2>
+<ol>
+<li><b>Most creator hacks are stale.</b> Of 75 mechanisms whose links could be read, about 42 (56%) are nofollow, ugc or redirect-wrapped. Read rel in the raw HTML before doing anything.</li>
+<li><b>True hacks on generic platforms are filler for a DR 90 brand.</b> One new low-relevance domain does not move 91k. Keep them for new sites, or do them once.</li>
+<li><b>The biggest wins are Brevo's own leaks.</b> Dead URLs, the apex 404, legacy domains and a noindexed listing strand about 9k referring domains (the sum across URLs). Fixing them needs redirects and settings, no outreach.</li>
+<li><b>Jackpots scale with the customer base.</b> Things customers paste onto their own sites earn thousands of domains: legal clauses, sub-processor lists, form badges. Brevo's German privacy policy already has 16,718 dofollow referring domains from exactly this.</li>
+<li><b>The best hit rate comes from one signal: a rival is linked on a host and Brevo is not.</b> Developer docs, marketplaces and partner pages show it most. Brevo lags Resend and SendGrid most in the developer ecosystem.</li>
+<li><b>Look for multipliers.</b> One action can repeat across many pages: docs versions, awesome-list mirrors, auto-generated "alternatives" pages, one page per action. Score a hack by links per action, not per platform.</li>
+</ol>
+
+<h2 id="fw">4. The framework: how to find and validate hacks</h2>
+<h3>A. Five search lenses</h3>
+<table>
+<tr><th>Lens</th><th>How to run it</th><th>What it finds</th></tr>
+<tr><td>1. Creator feed scan</td><td>IG, TikTok, YouTube Shorts, X, LinkedIn. Queries: "backlink hack", "free DR 90 backlink", "dofollow trick", "no outreach backlinks", "sneaky backlink". Mine comment-gated creators' follow-up posts.</td><td>Platform tricks (lots of noise, about half dead)</td></tr>
+<tr><td>2. Mechanism siblings</td><td>Reduce each hack to its mechanism, then list siblings. Example: unroll bot, then other mirrors, transcript sites and archive bots.</td><td>More of a working class</td></tr>
+<tr><td>3. Competitor URL autopsy</td><td>DataForSEO <code>backlinks/domain_pages</code> for rivals, ordered by referring domains. Re-run with filters <code>%utm_%</code>, <code>%chatgpt%</code>, <code>%referral%</code>. Each top URL type is a mechanism.</td><td>Jackpots: legal citations, badges, statistics pages, AI-citation leaks</td></tr>
+<tr><td>4. Rival gap scan</td><td><code>backlinks/page_intersection</code> for two rivals, excluding brevo.com and sendinblue.com, dofollow only. Classify the URLs by pattern (docs, integrations, alternatives, stack, awesome).</td><td>Hosts and page types where Brevo is missing</td></tr>
+<tr><td>5. Own-house leak audit</td><td><code>domain_pages</code> with status 404 or 5xx for brevo.com, sendinblue.com and acquired domains. Follow every redirect chain to the end. Read robots headers on Brevo's own listings.</td><td>Zero-outreach reclamation</td></tr>
+</table>
+<h3>B. Six validation gates</h3>
+<table>
+<tr><th>Gate</th><th>Test</th><th>Fail means</th></tr>
+<tr><td>T1 Indexable</td><td>Example output page is 200, has no meta or header noindex, robots.txt allows, canonical is self</td><td>Google never sees the link</td></tr>
+<tr><td>T2 Dofollow</td><td>Target link in the raw HTML (rendered if JS) has no nofollow, ugc or sponsored, and is not wrapped in a redirect (<code>linkedin.com/redir</code>, <code>google.com/url</code>)</td><td>No equity</td></tr>
+<tr><td>T3 Google footprint</td><td><code>site:host/path-pattern</code> returns indexed pages</td><td>Pages exist but are not indexed</td></tr>
+<tr><td>T4 Index confirms</td><td>DataForSEO records dofollow links from the host to some rival</td><td>Crawlers do not count it</td></tr>
+<tr><td>T5 Brevo gap</td><td>Brevo has 0 links from the host and rivals have some</td><td>Already captured</td></tr>
+<tr><td>T6 Value</td><td>Host rank, spam score, topical relevance, links per action, effort, brand risk</td><td>Real but not worth it</td></tr>
+</table>
+<p><b>Tiers:</b></p>
+<ul>
+<li><span class="tag jp">jackpot</span> over 500 referring domains, or a multiplier</li>
+<li><span class="tag">solid</span> a relevant high-authority host, 1 to 50 links</li>
+<li><span class="tag">filler</span> 1 low-relevance domain</li>
+</ul>
+<p>The validator script runs T1 to T5 automatically (path in section 8).</p>
+
+<h2 id="r2">5. Round 2: what the framework found</h2>
+<p><b>Gap scan</b> over 5 rival pairs:</p>
+<table>
+<tr><th>Rival pair</th><th>Hosts linking both, not Brevo</th></tr>
+<tr><td>Resend + SendGrid</td><td class="num">548</td></tr>
+<tr><td>Postmark + Mailgun</td><td class="num">1,108</td></tr>
+<tr><td>Klaviyo + Omnisend</td><td class="num">2,403</td></tr>
+<tr><td>Mailchimp + Klaviyo</td><td class="num">1,337</td></tr>
+<tr><td>Mailchimp + HubSpot</td><td class="num">3,926</td></tr>
+</table>
+<ul>
+<li><b>Shortlist for Link Engine prospecting:</b> 451 hosts appear in 2 or more pairs with dofollow links, and 73 of those sit in both the developer and the marketing sets.</li>
+<li><b>Mechanism types:</b> the URL patterns of the 882 pages linking Resend and SendGrid but not Brevo surfaced the new types below.</li>
+</ul>
+<table>
+<tr><th>Mechanism</th><th>Lens</th><th>Validation</th><th>Verdict</th><th>Tier</th></tr>
+<tr><td>Sub-processor pages (B2B customers list Brevo under GDPR)</td><td>Gap scan</td><td>94 pages naming Brevo or Sendinblue: 65 unlinked, 24 dofollow, 5 nofollow only</td><td><span class="tag ok">works</span></td><td><span class="tag jp">jackpot</span></td></tr>
+<tr><td>Privacy-policy clauses (B2C sites cite Brevo's policy)</td><td>Autopsy</td><td>Brevo's DE policy has 16,718 dofollow referring domains, the EN policy 7,049 referring domains. Mailchimp's privacy, terms and GDPR pages total about 137k referring domains. Policy generators not yet tested.</td><td><span class="tag ok">works</span></td><td><span class="tag jp">jackpot</span></td></tr>
+<tr><td>AI-citation leak (writers paste ChatGPT-cited links)</td><td>Autopsy</td><td>Linked URLs carrying <code>utm_source=chatgpt.com</code>: HubSpot 2,252, Mailchimp 513, Klaviyo 248, Omnisend 107, Brevo 63. HubSpot's statistics page alone has 255 referring domains this way.</td><td><span class="tag ok">works</span></td><td><span class="tag">solid</span>, growing</td></tr>
+<tr><td>Statistics pages</td><td>Autopsy</td><td>HubSpot marketing-statistics: 17,069 referring domains. Mailchimp benchmarks: 4,109. Omnisend statistics pages: 649 and 563. Brevo has none in its top-linked list.</td><td><span class="tag ok">works</span></td><td><span class="tag jp">jackpot</span></td></tr>
+<tr><td>Awesome-list mirror cascade</td><td>Gap scan</td><td>The icopy.site mirror of awesome-emails links Resend and SendGrid dofollow; Brevo is not in the list. One merged PR repeats across every mirror.</td><td><span class="tag ok">works</span></td><td><span class="tag">solid</span>, multiplier</td></tr>
+<tr><td>Docs version multiplier</td><td>Gap scan</td><td>Laravel repeats the provider links on 10.x, 11.x, 12.x and master</td><td><span class="tag ok">works</span></td><td><span class="tag">solid</span>, multiplier</td></tr>
+<tr><td>"Alternatives to X" generators</td><td>Gap scan</td><td>launchzone.co: 17 of 17 dofollow. shipboost.io: mixed (1 of 2). Brevo is on the shipboost index page (1 dofollow).</td><td><span class="tag mid">partial</span></td><td><span class="tag">solid</span></td></tr>
+<tr><td>Platform knowledge-base guides (Vercel KB)</td><td>Gap scan</td><td>Vercel's email guide links Resend only</td><td><span class="tag ok">works</span></td><td><span class="tag">solid</span></td></tr>
+<tr><td>Integration-pair pages (n8n "A and B")</td><td>Gap scan</td><td>The n8n Brevo + Shopify page names Brevo 130 times with 0 outbound links</td><td><span class="tag no">no link</span></td><td>skip</td></tr>
+</table>
+<p>The GitHub/web pass also confirmed these as dofollow and Brevo-absent; they enter the queue as <span class="tag">solid</span>:</p>
+<ul>
+<li>An official Google Workspace add-on</li>
+<li>Docker MCP registry and Docker Hub</li>
+<li>awesome-mcp-servers (via its dofollow mirror)</li>
+<li>A Chocolatey package for a Brevo CLI</li>
+<li>An official crate on crates.io and docs.rs</li>
+<li>Vercel Marketplace and Supabase partner pages (Resend has both)</li>
+<li>Meltano Hub and Airbyte connectors</li>
+<li>Microsoft Edge Add-ons (dofollow, unlike Chrome)</li>
+</ul>
+
+<h2 id="myths">6. Busted myths (link read live on 12 Nov)</h2>
+<table>
+<tr><th>Claimed dofollow, actually</th><th>Hosts</th></tr>
+<tr><td><span class="tag no">nofollow / ugc</span></td><td>Chrome Web Store (the most-shared "DR 99" hack), Medium, Product Hunt, HackerNoon, AlternativeTo, SaaSHub, Trustpilot, BBB, Buy Me a Coffee, Gamma, Hashnode, telegra.ph, WordPress.org, GitHub READMEs, Hugging Face, Crunchbase, Wikidata, Stripe Climate, EFF sponsor page, free press-release sites, website-stats report pages</td></tr>
+<tr><td><span class="tag no">package registries</span></td><td>npm, PyPI, Packagist, RubyGems, NuGet, pkg.go.dev, libraries.io (all nofollow)</td></tr>
+<tr><td><span class="tag no">redirect-wrapped</span></td><td>LinkedIn articles (<code>linkedin.com/redir</code>), published Google Sheets (<code>google.com/url</code>)</td></tr>
+<tr><td><span class="tag no">no vendor link</span></td><td>Zapier, n8n, G2, Capterra</td></tr>
+<tr><td><span class="tag mid">subdomain only</span></td><td>beehiiv, Substack, Notion, ChatGPT Sites: dofollow, but the authority belongs to your subdomain, not the platform</td></tr>
+</table>
+
+<h2 id="plan">7. Action plan, by value per effort</h2>
+<table>
+<tr><th>#</th><th>Action</th><th>Size</th><th>Owner</th></tr>
+<tr><td>1</td><td>Point the apex <code>brevo.com</code> at a 301 to <code>www.brevo.com</code> (one DNS or redirect change)</td><td class="num">617 URLs; 1,165 referring domains on the homepage</td><td>Web infra</td></tr>
+<tr><td>2</td><td>Ship the 301 map: the Newsletter2Go recipient page, developer docs, legacy forms and broken Sendinblue chains. Send newsletter2go.com paths to content, not the login screen. Fix metrilo.com/blog.</td><td class="num">300 rows ready, 4,743 dofollow referring domains</td><td>Web team, using the CSV</td></tr>
+<tr><td>3</td><td>Lift the noindex on the Shopify listing: check listing visibility in the Partner Dashboard, then raise it with Shopify partner support</td><td>Brevo's main ecom listing</td><td>Ecom BU</td></tr>
+<tr><td>4</td><td>Developer PRs:
+<ul>
+<li>Laravel docs: link the existing Brevo mentions</li>
+<li>Auth.js and Medusa providers</li>
+<li>about 20 Pipedream actions</li>
+<li>awesome-emails and awesome-mcp-servers entries</li>
+</ul></td><td>About 10 high-relevance hosts plus multipliers</td><td>DevRel</td></tr>
+<tr><td>5</td><td>Product proposals:
+<ul>
+<li>"Powered by Brevo" on free-plan forms and landing pages (brand anchor, opt-out allowed)</li>
+<li>a trust-center sub-processor snippet that includes the link</li>
+<li>a current Brevo clause in the main privacy-policy generators</li>
+</ul></td><td>Mailchimp-scale mechanics</td><td>Product + Legal</td></tr>
+<tr><td>6</td><td>Link Engine: add two methods, "partner pages naming Brevo" and "sub-processor pages", and load the 451 multi-pair gap hosts</td><td>Warm asks</td><td>Link Engine</td></tr>
+<tr><td>7</td><td>A Brevo statistics page built to be cited by LLMs (ties into Citation Engine)</td><td>Rivals 4k to 17k referring domains</td><td>Content</td></tr>
+<tr><td>8</td><td>Filler, do once and don't scale: a Thread Reader unroll of a useful @Brevo thread</td><td>+1 referring domain</td><td>Social</td></tr>
+</table>
+<div class="box w"><p><b>Round 3 tests:</b></p>
+<ul>
+<li>Do privacy-policy generators (iubenda, Termly, Complianz, eRecht24) include Brevo, and with which URL?</li>
+<li>Path-level redirect maps for newsletter2go.com and newsletter2go.de</li>
+<li>A monthly re-run of lenses 3 to 5 as a Link Engine "hack gate"</li>
+</ul></div>
+
+<h2 id="method">8. Method, files, cost</h2>
+<ul>
+<li><b>Research:</b> three parallel passes collected 98 mechanisms (40 social, 29 forums, 29 GitHub and web). Each pass read the live rel on its examples.</li>
+<li><b>Re-check:</b> every round-1 verdict was re-checked here. Rendered pages (Stripe Apps) went through a headless scrape.</li>
+<li><b>Backlink data:</b> DataForSEO via treg. Its domain rank is on a 0 to 1000 scale. "RD-sum" adds up referring domains across URLs, so domains linking to several dead URLs count more than once.</li>
+<li><b>Files:</b> <a href="brevo_redirect_map.csv">brevo_redirect_map.csv</a> (300 rows: linked URL, where it lands now, referring domains, suggested 301 target, confidence). Help-center rows answered 403 to our checker, so confirm them before redirecting.</li>
+<li><b>Reusable validator:</b> <code>~/claude fc/backlink-hacks/validator/</code> (gates T1 to T5, batch mode).</li>
+<li><b>Data cost:</b> under $12 on treg (the team's total for the day).</li>
+</ul>
+</main>
+</body>
+</html>
